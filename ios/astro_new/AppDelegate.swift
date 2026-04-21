@@ -1,4 +1,5 @@
 import UIKit
+import FirebaseCore
 import React
 import React_RCTAppDelegate
 import ReactAppDependencyProvider
@@ -28,7 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       in: window,
       launchOptions: launchOptions
     )
-
+    FirebaseApp.configure()
     return true
   }
 }

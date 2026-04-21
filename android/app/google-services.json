@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1079785483668",
+    "project_id": "super-astro-8243f",
+    "storage_bucket": "super-astro-8243f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1079785483668:android:7f6ac365a56b5bec05f381",
+        "android_client_info": {
+          "package_name": "com.astro_new"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWJI-OKEIneMMuzd3YuVT97Wh2MXk8WfU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
