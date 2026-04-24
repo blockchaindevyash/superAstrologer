@@ -156,21 +156,46 @@ const VideoCallScreen = ({ navigation, route }) => {
         style={{
           width: '100%',
           paddingTop: insets.top,
+          paddingBottom: insets.bottom,
           backgroundColor: COLORS.primary,
         }}
       />
       {/* Remote Video Full Screen */}
-      {remoteUid !== null && (
+      {/* {remoteUid !== null && (
         <RtcSurfaceView
           style={styles.remoteVideo}
           canvas={{uid: remoteUid}}
         />
-      )}
+      )} */}
       {/* Local Video Small Preview */}
-      {joined && (
+      {/* {joined && (
         <RtcSurfaceView
           style={styles.localVideo}
           canvas={{uid: 0}}
+          zOrderMediaOverlay={true}
+        />
+      )} */}
+      {/* ✅ If remote NOT joined → show LOCAL FULL SCREEN */}
+      {remoteUid === null && joined && (
+        <RtcSurfaceView
+          style={styles.remoteVideo} // 👈 full screen
+          canvas={{ uid: 0 }}
+        />
+      )}
+
+      {/* ✅ If remote joined → show REMOTE FULL */}
+      {remoteUid !== null && (
+        <RtcSurfaceView
+          style={styles.remoteVideo}
+          canvas={{ uid: remoteUid }}
+        />
+      )}
+
+      {/* ✅ Local preview (only when remote joined) */}
+      {remoteUid !== null && joined && (
+        <RtcSurfaceView
+          style={styles.localVideo}
+          canvas={{ uid: 0 }}
           zOrderMediaOverlay={true}
         />
       )}

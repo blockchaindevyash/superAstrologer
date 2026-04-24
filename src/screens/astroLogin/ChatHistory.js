@@ -6,6 +6,7 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
+  RefreshControl,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import COLORS from '../../config/colors';
@@ -13,8 +14,10 @@ import { Loader, AppStatusBar, BackButton } from '../../config/service';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { fetchChatHistory, fetchChatList } from '../../api/api'
 import { useFocusEffect } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ChatHistory = ({ navigation }) => {
+  const insets = useSafeAreaInsets();
   const [history, setHistory] = React.useState([])
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState(null)
@@ -67,7 +70,7 @@ const ChatHistory = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
       <AppStatusBar />
 
       {/* Header */}
@@ -97,7 +100,9 @@ const ChatHistory = ({ navigation }) => {
           <Text style={{ color: 'red' }}>{error}</Text>
         </View>
       ) : (
-        <ScrollView contentContainerStyle={styles.content}>
+        <ScrollView contentContainerStyle={styles.content} refreshControl={
+                  <RefreshControl refreshing={loading} onRefresh={load} />
+                }>
           {history.length === 0 && (
             <Text style={{ color: COLORS.muted }}>No history available.</Text>
           )}

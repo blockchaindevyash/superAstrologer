@@ -14,8 +14,10 @@ import { Loader, AppStatusBar, BackButton } from '../../config/service';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { fetchAccount, fetchChatHistory, onGetCommonApi } from '../../api/api'
 import { useFocusEffect } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const History = ({ navigation }) => {
+  const insets = useSafeAreaInsets();
   const [history, setHistory] = React.useState([])
   const [loading, setLoading] = React.useState(true)
   const [wallet, setWallet] = React.useState('');
@@ -110,7 +112,7 @@ const History = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
       <AppStatusBar />
       {/* Header */}
       <View style={styles.header}>

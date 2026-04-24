@@ -18,8 +18,10 @@ import { fetchAccount, logout as apiLogout } from '../../api/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Account = ({ navigation }) => {
+  const insets = useSafeAreaInsets();
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
   const [user, setUser] = React.useState(null);
@@ -141,7 +143,7 @@ const Account = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
       <AppStatusBar backgroundColor={COLORS.secondary} />
       {/* Header */}
       <View style={styles.header}>

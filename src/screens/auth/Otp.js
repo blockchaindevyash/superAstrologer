@@ -31,6 +31,7 @@ export default function OtpVerificationScreen({ navigation, route }) {
   const [resending, setResending] = useState(false);
   const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
   const [verifying, setVerifying] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     let interval;
@@ -81,11 +82,12 @@ export default function OtpVerificationScreen({ navigation, route }) {
     return token;
   };
 
-  const handleVerify = async () => {
-    const vcode = otpValues.join('');
-    
+  const handleVerify = async (newOtpValues) => {
+    const vcode = newOtpValues.join('');
+    console.log('Entered OTP:', vcode);
     if (vcode.length !== 6) {
       Alert.alert('Error', 'Please enter the complete 6-digit code');
+      setVerifying(false);
       return;
     }
     const token = Platform.OS === 'android' ? await androidToken() : await iosToken();
@@ -171,6 +173,10 @@ export default function OtpVerificationScreen({ navigation, route }) {
                 setOtpValues(newOtpValues);
                 if (text && index < 5) {
                   inputRefs.current[index + 1].focus();
+                } else if (text && index === 5) {
+                  Keyboard.dismiss();
+                  setVerifying(true);
+                  handleVerify(newOtpValues);
                 }
               }}
               onKeyPress={({ nativeEvent }) => {
@@ -212,10 +218,10 @@ export default function OtpVerificationScreen({ navigation, route }) {
       </View>
 
       {/* Footer */}
-      <View style={styles.footer}>
+      {/* <View style={styles.footer}>
         <TouchableOpacity 
           style={[styles.verifyButton, verifying && styles.verifyButtonDisabled]}
-          onPress={handleVerify}
+          onPress={() => handleVerify(otpValues)}
           disabled={verifying}
         >
           {verifying ? (
@@ -228,11 +234,15 @@ export default function OtpVerificationScreen({ navigation, route }) {
           )}
         </TouchableOpacity>
 
-        {/* iOS Indicator */}
         <View style={styles.homeIndicatorWrapper}>
           <View style={styles.homeIndicator} />
         </View>
-      </View>
+      </View> */}
+      {verifying && (
+        <View style={styles.indicatorView}>
+          <ActivityIndicator color="#fff" size="large" />
+        </View>
+      )}
     </View>
     </TouchableWithoutFeedback>
   );
@@ -242,7 +252,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff',
   },
-
+  indicatorView: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',

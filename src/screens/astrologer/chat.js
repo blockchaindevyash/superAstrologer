@@ -30,6 +30,7 @@ const Chat = ({ route, navigation }) => {
   const { astrologer, walletBalance } = route?.params || {}
   const { id, name, img } = astrologer || {}
   const adminRef = useRef(null);
+  const allAdminRef = useRef([]);
   // State declarations
   const [messages, setMessages] = React.useState([])
   const [userProfile, setUserProfile] = React.useState(null)
@@ -416,16 +417,20 @@ const Chat = ({ route, navigation }) => {
           setRefresh(!refresh);
           sendUserMessage();
         } else {
+          const admins = response.data.admin || [];
           const orderedMessages = [...apiMessages].reverse();
           setMessageList(orderedMessages);
           setAdminData(response.data.admin);
-          adminRef.current = response.data.admin;
+          allAdminRef.current = admins;
+          adminRef.current = admins.find(
+            (item) => item?.phone === "6355216949"
+          );
           setRefresh(!refresh);
           setReceiverData(response.data.receiver);
           setIsLoading(false);
           setTimeout(() => {
             listRef.current?.scrollToOffset({
-              offset: 999999999,
+              offset: 99999,
               animated: true,
             });
           }, 100);
@@ -458,7 +463,6 @@ const Chat = ({ route, navigation }) => {
         });
       } else {
         // const nextDate = moment(nextItem.created_at).format('YYYY-MM-DD');
-
         if (currentItem.created_at !== nextDate) {
           newData.push({
             id: `date-${currentItem.created_at}`,
@@ -587,7 +591,7 @@ const Chat = ({ route, navigation }) => {
         });
         setTimeout(() => {
           listRef.current?.scrollToOffset({
-            offset: 999999999,
+            offset: 99999,
             animated: true,
           });
         }, 100);
@@ -813,6 +817,7 @@ const Chat = ({ route, navigation }) => {
     Keyboard.dismiss();
     if (!input.trim()) return;
     try {
+      const admins = allAdminRef.current || [];
       setMessageLoading(true);
       // let raw = JSON.stringify({
       //   receiver_id: receiverData?.id,
@@ -839,7 +844,7 @@ const Chat = ({ route, navigation }) => {
         setMessageLoading(false);
         setTimeout(() => {
           listRef.current?.scrollToOffset({
-            offset: 999999999,
+            offset: 99999,
             animated: true,
           });
         }, 100);
@@ -885,6 +890,48 @@ const Chat = ({ route, navigation }) => {
             }),
           }
         );
+
+        const notifyPromises = admins
+      .filter(admin => 
+        admin?.push_notification && 
+        admin?.id !== userProfile?.id // skip self if needed
+      )
+      .map(admin =>
+        fetch(
+          "https://fcm.googleapis.com/v1/projects/super-astro-8243f/messages:send",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify({
+              message: {
+                token: admin.push_notification,
+                android: {
+                  priority: "high",
+                },
+                apns: {
+                  payload: {
+                    aps: {
+                      sound: "default"
+                    }
+                  }
+                },
+                data: {
+                  type: "chat_message",
+                  senderId: String(userProfile?.id),
+                  senderName: userProfile?.name,
+                  chatId: String(receiverData?.id),
+                  message: response.data.data?.message,
+                }
+              }
+            }),
+          }
+        )
+      );
+
+    await Promise.all(notifyPromises); // 🚀 parallel calls
       }
     } catch (error) {
       console.log('onSendMessage Error:', error);

@@ -17,6 +17,7 @@ import COLORS from '../../config/colors';
 import {Loader,AppStatusBar} from '../../config/service';
 import { fetchHomepageData } from '../../api/api';
 import { OneSignal, LogLevel } from 'react-native-onesignal';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Image mapping for categories
 const categoryImages = {
@@ -45,6 +46,7 @@ const TabButton = ({ icon, label, active, onPress }) => (
 );
 
 export default function Home({ navigation }) {
+  const insets = useSafeAreaInsets();
   const [profile, setProfile] = React.useState(null)
   const [loading, setLoading] = React.useState(true)
   const [activeChats, setActiveChats] = React.useState([])
@@ -124,7 +126,7 @@ export default function Home({ navigation }) {
   const summaryText = profile ? [profile.name, profile.dob ? formatDate(new Date(profile.dob)) : null, profile.place].filter(Boolean).join(' | ') : null
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, {paddingBottom: insets.bottom, paddingTop: insets.top}]}>
       <AppStatusBar backgroundColor='#fff'/>
       <View style={styles.header}>
         <View style={styles.headerTop}>

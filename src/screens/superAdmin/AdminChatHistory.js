@@ -6,6 +6,7 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
+  RefreshControl,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import COLORS from '../../config/colors';
@@ -13,12 +14,15 @@ import { Loader, AppStatusBar, BackButton } from '../../config/service';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { fetchChatHistory, fetchChatList, onGetCommonApi } from '../../api/api'
 import { useFocusEffect } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const AdminChatHistory = ({ navigation }) => {
+  const insets = useSafeAreaInsets();
   const [history, setHistory] = React.useState([])
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState(null)
   const [profile, setProfile] = React.useState(null)
+  const [refreshing, setRefreshing] = React.useState(false);
 
   React.useEffect(() => {
     let mounted = true
@@ -71,20 +75,92 @@ const AdminChatHistory = ({ navigation }) => {
     }
   }
 
+  // const fmtTimeString = (ts) => {
+  //   if (!ts) return ''
+  //   const d = new Date(ts)
+  //   let hrs = d.getHours()
+  //   const mins = d.getMinutes()
+  //   const ampm = hrs >= 12 ? 'PM' : 'AM'
+  //   hrs = hrs % 12
+  //   if (hrs === 0) hrs = 12
+  //   const m = mins < 10 ? `0${mins}` : mins
+  //   return `${hrs}:${m} ${ampm}`
+  // }
+  
+  
+  // const fmtTimeString = (ts) => {
+  //   if (!ts) return '';
+
+  //   const d = new Date(ts);
+  //   const now = new Date();
+
+  //   const isToday =
+  //     d.getDate() === now.getDate() &&
+  //     d.getMonth() === now.getMonth() &&
+  //     d.getFullYear() === now.getFullYear();
+
+  //   if (isToday) {
+  //     // 👉 Show time
+  //     let hrs = d.getHours();
+  //     const mins = d.getMinutes();
+  //     const ampm = hrs >= 12 ? 'PM' : 'AM';
+
+  //     hrs = hrs % 12;
+  //     if (hrs === 0) hrs = 12;
+
+  //     const m = mins < 10 ? `0${mins}` : mins;
+
+  //     return `${hrs}:${m} ${ampm}`;
+  //   } else {
+  //     // 👉 Show date (DD/MM/YYYY or customize)
+  //     const day = d.getDate();
+  //     const month = d.getMonth() + 1;
+  //     const year = d.getFullYear();
+
+  //     return `${day}/${month}/${year}`;
+  //   }
+  // };
+
+
   const fmtTimeString = (ts) => {
-    if (!ts) return ''
-    const d = new Date(ts)
-    let hrs = d.getHours()
-    const mins = d.getMinutes()
-    const ampm = hrs >= 12 ? 'PM' : 'AM'
-    hrs = hrs % 12
-    if (hrs === 0) hrs = 12
-    const m = mins < 10 ? `0${mins}` : mins
-    return `${hrs}:${m} ${ampm}`
+  if (!ts) return '';
+
+  const d = new Date(ts);
+  const now = new Date();
+
+  const isToday =
+    d.getDate() === now.getDate() &&
+    d.getMonth() === now.getMonth() &&
+    d.getFullYear() === now.getFullYear();
+
+  const yesterday = new Date();
+  yesterday.setDate(now.getDate() - 1);
+
+  const isYesterday =
+    d.getDate() === yesterday.getDate() &&
+    d.getMonth() === yesterday.getMonth() &&
+    d.getFullYear() === yesterday.getFullYear();
+
+  if (isToday) {
+    let hrs = d.getHours();
+    const mins = d.getMinutes();
+    const ampm = hrs >= 12 ? 'PM' : 'AM';
+
+    hrs = hrs % 12;
+    if (hrs === 0) hrs = 12;
+
+    return `${hrs}:${mins < 10 ? '0' + mins : mins} ${ampm}`;
   }
 
+  if (isYesterday) {
+    return "Yesterday";
+  }
+
+  return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+};
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
       <AppStatusBar />
       {/* Header */}
       <View style={styles.header}>
@@ -112,14 +188,16 @@ const AdminChatHistory = ({ navigation }) => {
           <Text style={{ color: 'red' }}>{error}</Text>
         </View>
       ) : (
-        <ScrollView contentContainerStyle={styles.content}>
+        <ScrollView contentContainerStyle={styles.content} refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={load} />
+        }>
           {history.length === 0 && (
             <Text style={{ color: COLORS.muted }}>No history available.</Text>
           )}
           {history.map((item) => (
-            <TouchableOpacity 
-              style={styles.chatDataView} 
-              onPress={() => navigation.navigate('AdminMessageList', {name: item?.sender.user_type != 'astrologer' ? item?.sender.name : item.receiver.name, astrologer: item?.sender.user_type == 'astrologer' ? item?.sender : item.receiver, user: item?.sender.user_type != 'astrologer' ? item?.sender : item.receiver})}>
+            <TouchableOpacity
+              style={styles.chatDataView}
+              onPress={() => navigation.navigate('AdminMessageList', { name: item?.sender.user_type != 'astrologer' ? item?.sender.name : item.receiver.name, astrologer: item?.sender.user_type == 'astrologer' ? item?.sender : item.receiver, user: item?.sender.user_type != 'astrologer' ? item?.sender : item.receiver })}>
               <View style={{ width: '15%' }}>
                 {item?.img ? (
                   <Image source={{ uri: item.img }} style={styles.avatar} />
@@ -130,7 +208,7 @@ const AdminChatHistory = ({ navigation }) => {
               <View style={styles.chatSubView}>
                 <View style={{ width: '80%' }}>
                   <View style={styles.chatNameView}>
-                    <Text style={styles.nameText} numberOfLines={1}>{item.receiver?.name} - {item.sender?.name}</Text>
+                    <Text style={styles.nameText} numberOfLines={1}>{item?.sender.user_type != 'astrologer' ?`${item.receiver?.name} - ${item.sender?.name}` : `${item.sender?.name} - ${item.receiver?.name}`}</Text>
                     <Text style={styles.lastMessageText}>{fmtTimeString(item.last_message_time)}</Text>
                   </View>
                   <Text style={styles.lastMessageText} numberOfLines={1}>{item.last_message}</Text>

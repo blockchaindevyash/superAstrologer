@@ -20,6 +20,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import COLORS from "../../config/colors";
 import { Loader, AppStatusBar, BackButton } from "../../config/service";
 import { sendContact } from "../../api/api";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 if (Platform.OS === "android") {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -52,6 +53,7 @@ const FAQItem = ({ title, description, openDefault = false }) => {
 };
 
 export default function Contact() {
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const route = useRoute();
   const contactData = route?.params?.contactData || route?.params || {};
@@ -113,7 +115,7 @@ export default function Contact() {
     });
   };
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
       <AppStatusBar backgroundColor={COLORS.secondary} />
 
       {/* Header */}

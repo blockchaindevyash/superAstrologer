@@ -14,10 +14,11 @@ import COLORS from '../../config/colors';
 import { AppStatusBar, BackButton } from '../../config/service';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { updateAccount } from '../../api/api';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Setting = ({ route, navigation }) => {
   const { user } = route?.params || {};
-
+  const insets = useSafeAreaInsets();
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
   const [loading, setLoading] = useState(false);
@@ -42,7 +43,7 @@ const Setting = ({ route, navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
       <AppStatusBar backgroundColor={COLORS.secondary} />
 
       {/* Header */}

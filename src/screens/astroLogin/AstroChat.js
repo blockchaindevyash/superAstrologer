@@ -21,11 +21,12 @@ import COLORS from '../../config/colors';
 import { useFocusEffect } from '@react-navigation/native'
 import { getFunctions, httpsCallable } from '@react-native-firebase/functions';
 import { getApp } from '@react-native-firebase/app';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const AstroChat = ({ route, navigation }) => {
   const { astrologer } = route?.params || {}
   const { id, name, img } = astrologer || {}
-
+  const insets = useSafeAreaInsets();
   // State declarations
   const [messages, setMessages] = React.useState([])
   const [userProfile, setUserProfile] = React.useState(null)
@@ -135,7 +136,7 @@ const AstroChat = ({ route, navigation }) => {
         setIsLoading(false);
         setTimeout(() => {
           listRef.current?.scrollToOffset({
-            offset: 9999999,
+            offset: 99999,
             animated: true,
           });
         }, 100);
@@ -173,33 +174,28 @@ const AstroChat = ({ route, navigation }) => {
         if (data.event === "pusher_internal:subscription_succeeded") {
           console.log(`✅ Successfully subscribed to ${data.channel}`);
         }
-
         if (data.event === "message.sent" || data.event === ".message.sent") {
           const actualMessage = JSON.parse(data.data);
           const newMessage = actualMessage.data;
-
           // Prevent echoing your own message twice if you already appended it locally
           if (newMessage.sender_id === userProfile?.id) {
             return;
           }
-
           setMessageList(prevMessages => {
             const alreadyExists = prevMessages.some(
               msg => msg.id === newMessage.id
             );
-
             if (alreadyExists) {
               console.log("⚠ Message already exists, skipping:", newMessage.id);
               return prevMessages;
             }
-
             console.log("✅ Adding new message:", newMessage.id);
 
             return [...prevMessages, newMessage];
           });
           setTimeout(() => {
             listRef.current?.scrollToOffset({
-              offset: 9999999,
+              offset: 99999,
               animated: true,
             });
           }, 100);
@@ -263,7 +259,7 @@ const AstroChat = ({ route, navigation }) => {
         setMessageLoading(false);
         setTimeout(() => {
           listRef.current?.scrollToOffset({
-            offset: 9999999,
+            offset: 99999,
             animated: true,
           });
         }, 100);
@@ -352,7 +348,7 @@ const AstroChat = ({ route, navigation }) => {
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
       {/* <KeyboardAvoidingView style={styles.wrapper} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}> */}
       <View style={styles.chatArea}>
         <FlatList

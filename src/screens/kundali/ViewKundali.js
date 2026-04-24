@@ -18,10 +18,12 @@ import RenderHTML from 'react-native-render-html'
 import Share from 'react-native-share'
 import COLORS from '../../config/colors'
 import { AppStatusBar, BackButton } from '../../config/service'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const { width } = Dimensions.get('window');
 
 const ViewKundali = ({ route, navigation }) => {
+  const insets = useSafeAreaInsets();
   const { kundaliData, personalDetails } = route.params || {}
 
   // Extract HTML content from response
@@ -80,7 +82,7 @@ Generated from AstroTalky
 
   if (!kundaliData) {
     return (
-      <SafeAreaView style={styles.safe}>
+      <SafeAreaView style={[styles.safe, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
         <AppStatusBar backgroundColor={COLORS.white} barStyle="dark-content" />
         <View style={styles.header}>
           <BackButton navigation={navigation} />
@@ -102,7 +104,7 @@ Generated from AstroTalky
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
       <AppStatusBar backgroundColor={COLORS.white} barStyle="dark-content" />
       <View style={styles.header}>
         <View style={styles.headerLeft}>

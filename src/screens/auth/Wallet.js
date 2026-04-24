@@ -20,6 +20,7 @@ import { Loader, AppStatusBar, BackButton } from '../../config/service';
 import { fetchWalletData, createWalletPaymentIntent, addWallet, createWalletRazorpayOrder } from '../../api/api';
 import { StripeProvider, useStripe } from '@stripe/stripe-react-native';
 import * as RNIap from "react-native-iap";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const PRODUCT_IDS = [
   'astro_100_credits',
@@ -34,6 +35,7 @@ const CREDIT_MAP = {
 };
 
 const Wallet = ({ navigation }) => {
+  const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState('add');
   const [amount, setAmount] = useState('');
   const [quickAmount, setQuickAmount] = useState(null);
@@ -294,7 +296,7 @@ const Wallet = ({ navigation }) => {
 
   return (
     <StripeProvider publishableKey={stripeKey || ''}>
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[styles.container, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
         <AppStatusBar backgroundColor={COLORS.secondary} />
         {/* Header */}
         <View style={styles.header}>

@@ -18,6 +18,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import COLORS from '../../config/colors';
 import { Loader, AppStatusBar, BackButton } from '../../config/service';
 import { updateAccount } from '../../api/api'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const { width } = Dimensions.get('window');
 
@@ -68,6 +69,7 @@ function formatTime(d) {
 }
 
 const Info = ({ navigation, route }) => {
+  const insets = useSafeAreaInsets();
   const [name, setName] = React.useState('')
   const [dob, setDob] = React.useState(null)
   const [showDobPicker, setShowDobPicker] = React.useState(false)
@@ -115,7 +117,7 @@ const Info = ({ navigation, route }) => {
   const isFormValid = name && dob && time && place && gender;
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, {paddingBottom: insets.bottom, paddingTop: insets.top}]}>
       <AppStatusBar backgroundColor={COLORS.white} barStyle="dark-content" />
       <View style={styles.header}>
         <BackButton navigation={navigation} />

@@ -18,10 +18,12 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Share from 'react-native-share'
 import COLORS from '../../config/colors'
 import { AppStatusBar, BackButton } from '../../config/service'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const { width } = Dimensions.get('window');
 
 const Detail = ({ navigation, route }) => {
+  const insets = useSafeAreaInsets();
   const { matchHtml, user1, user2 } = route.params || {}
 
   // Strip HTML tags for copy/share
@@ -48,7 +50,7 @@ const Detail = ({ navigation, route }) => {
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
       <AppStatusBar backgroundColor={COLORS.white} barStyle="dark-content" />
       <View style={styles.header}>
         <View style={styles.headerLeft}>

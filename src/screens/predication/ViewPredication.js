@@ -21,10 +21,12 @@ import Share from 'react-native-share'
 import { useRoute, useNavigation } from '@react-navigation/native'
 import COLORS from '../../config/colors'
 import { AppStatusBar, BackButton } from '../../config/service'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const { width } = Dimensions.get('window');
 
 const ViewPredication = () => {
+  const insets = useSafeAreaInsets();
   const route = useRoute()
   const navigation = useNavigation()
   const { predicationData, personalDetails } = route.params || {}
@@ -86,7 +88,7 @@ Generated from AstroTalky
 
   if (!predicationData) {
     return (
-      <SafeAreaView style={styles.safe}>
+      <SafeAreaView style={[styles.safe, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
         <AppStatusBar backgroundColor={COLORS.white} barStyle="dark-content" />
         <View style={styles.header}>
           <BackButton navigation={navigation} />
@@ -108,7 +110,7 @@ Generated from AstroTalky
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
       <AppStatusBar backgroundColor={COLORS.white} barStyle="dark-content" />
       <View style={styles.header}>
         <View style={styles.headerLeft}>

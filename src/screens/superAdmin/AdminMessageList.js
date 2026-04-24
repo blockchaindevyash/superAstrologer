@@ -21,10 +21,11 @@ import COLORS from '../../config/colors';
 import { useFocusEffect } from '@react-navigation/native'
 import { getFunctions, httpsCallable } from '@react-native-firebase/functions';
 import { getApp } from '@react-native-firebase/app';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const AdminMessageList = ({ route, navigation }) => {
   const {astrologer, user} = route?.params || {}
-  
+  const insets = useSafeAreaInsets();
   // State declarations
   const [messages, setMessages] = React.useState([])
   const [userProfile, setUserProfile] = React.useState(null)
@@ -85,7 +86,7 @@ const AdminMessageList = ({ route, navigation }) => {
         setIsLoading(false);
         setTimeout(() => {
           listRef.current?.scrollToOffset({
-            offset: 9999999,
+            offset: 99999,
             animated: true,
           });
         }, 100);
@@ -99,13 +100,13 @@ const AdminMessageList = ({ route, navigation }) => {
 
   useEffect(() => {
     // 1. Ensure backticks are used for string interpolation
-    const channelName = `astrochat.${userProfile?.id}`;
-    console.log("WebSocket connection established. Requesting to join:", userProfile, channelName);
+    const channelName = `astrochat.${astrologer?.id}`;
+    console.log("WebSocket connection established. Requesting to join:", astrologer, channelName);
     // Ensure backticks or string quotes are used for the URL
     const socket = new WebSocket('wss://single.callingagents.in/app/fskqxclddltkjq0g3zoe?protocol=7&client=mobile&version=1.0');
-    if (userProfile?.id) {
+    if (astrologer?.id) {
     socket.onopen = () => {
-      console.log("WebSocket connection established. Requesting to join:", userProfile);
+      console.log("WebSocket connection established. Requesting to join:", astrologer);
       const subscribeMessage = JSON.stringify({
         event: "pusher:subscribe",
         data: {
@@ -129,7 +130,7 @@ const AdminMessageList = ({ route, navigation }) => {
         const newMessage = actualMessage.data;
 
         // Prevent echoing your own message twice if you already appended it locally
-        if (newMessage.sender_id === userProfile?.id) {
+        if (newMessage.sender_id === astrologer?.id) {
           return;
         }
 
@@ -149,7 +150,7 @@ const AdminMessageList = ({ route, navigation }) => {
         });
         setTimeout(() => {
           listRef.current?.scrollToOffset({
-            offset: 9999999,
+            offset: 99999,
             animated: true,
           });
         }, 100);
@@ -214,7 +215,7 @@ const AdminMessageList = ({ route, navigation }) => {
         setMessageLoading(false);
         setTimeout(() => {
           listRef.current?.scrollToOffset({
-            offset: 9999999,
+            offset: 99999,
             animated: true,
           });
         }, 100);
@@ -269,7 +270,7 @@ const AdminMessageList = ({ route, navigation }) => {
   React.useEffect(() => {
     // scroll to bottom when messages change
     if (listRef.current && listRef.current.scrollToOffset) {
-      listRef.current.scrollToOffset({ offset: 9999999, animated: true })
+      listRef.current.scrollToOffset({ offset: 99999, animated: true })
     }
   }, [messages, typing])
 
@@ -302,7 +303,7 @@ const AdminMessageList = ({ route, navigation }) => {
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
       {/* <KeyboardAvoidingView style={styles.wrapper} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}> */}
         <View style={styles.chatArea}>
           <FlatList
@@ -324,12 +325,11 @@ const AdminMessageList = ({ route, navigation }) => {
             placeholderTextColor="#A0A0A0"
             multiline
           />
-          <TouchableOpacity 
-            style={[styles.sendBtn]} 
-            onPress={sendUserMessage} 
+          <TouchableOpacity
+            style={[styles.sendBtn]}
+            onPress={sendUserMessage}
             activeOpacity={0.8}
-            disabled={isEnded || !input.trim()}
-          >
+            disabled={isEnded || !input.trim()}>
             <Text style={styles.sendText}>➤</Text>
           </TouchableOpacity>
         </View>

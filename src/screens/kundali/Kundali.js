@@ -20,6 +20,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { generateKundali } from '../../api/api'
 import COLORS from '../../config/colors'
 import { AppStatusBar, BackButton } from '../../config/service'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const { width } = Dimensions.get('window');
 
@@ -68,6 +69,7 @@ const InputField = ({ label, value, placeholder, onChangeText, icon, onPress, ed
 )
 
 export default function Kundali({ navigation, route }) {
+  const insets = useSafeAreaInsets();
   const [name, setName] = React.useState('')
   const [dob, setDob] = React.useState(null)
   const [showDobPicker, setShowDobPicker] = React.useState(false)
@@ -165,7 +167,7 @@ export default function Kundali({ navigation, route }) {
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, {paddingBottom: insets.bottom, paddingTop: insets.top}]}>
       <AppStatusBar backgroundColor={COLORS.white} barStyle="dark-content" />
       <View style={styles.header}>
         <BackButton navigation={navigation} />

@@ -21,6 +21,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import { generateBaby } from '../../api/api'
 import COLORS from '../../config/colors'
 import { AppStatusBar, BackButton } from '../../config/service'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const { width } = Dimensions.get('window');
 
@@ -69,6 +70,7 @@ const InputField = ({ label, value, placeholder, onChangeText, icon, onPress, ed
 )
 
 const Baby = ({ navigation, route }) => {
+  const insets = useSafeAreaInsets();
   const scrollViewRef = React.useRef(null)
   const [dob, setDob] = React.useState(null)
   const [showDobPicker, setShowDobPicker] = React.useState(false)
@@ -140,7 +142,7 @@ const Baby = ({ navigation, route }) => {
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, {paddingBottom: insets.bottom, paddingTop: insets.top}]}>
       <AppStatusBar backgroundColor={COLORS.white} barStyle="dark-content" />
       <View style={styles.header}>
         <BackButton navigation={navigation} />

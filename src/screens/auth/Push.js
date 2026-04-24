@@ -13,10 +13,11 @@ import { useNavigation } from "@react-navigation/native";
 import { getPush } from "../../api/api";
 import COLORS from "../../config/colors";
 import { Loader, AppStatusBar, BackButton } from "../../config/service";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Push = () => {
   const navigation = useNavigation();
-
+  const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -68,7 +69,7 @@ const Push = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
       <AppStatusBar backgroundColor={COLORS.secondary} />
       {/* Header */}
       <View style={styles.header}>

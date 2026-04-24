@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
 } from 'react-native'
 import { fetchAstrologerData } from '../../api/api'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const avatarImg = require('../../../assets/catee.jpg')
 
@@ -27,7 +28,7 @@ const Profile = ({ route }) => {
     cates: [],
     img: null 
   }
-
+  const insets = useSafeAreaInsets();
   const [tab, setTab] = React.useState('about')
   const [categoryNames, setCategoryNames] = React.useState([])
   const [loading, setLoading] = React.useState(true)
@@ -57,7 +58,7 @@ const Profile = ({ route }) => {
   }, [data.cates])
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.headerWrap}>
           <Image source={data.img ? { uri: data.img } : avatarImg} style={styles.avatar} />
