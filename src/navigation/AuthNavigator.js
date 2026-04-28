@@ -10,6 +10,8 @@ import Chat from "../screens/astrologer/chat";
 import Info from "../screens/home/info";
 import Profile from "../screens/astrologer/profile";
 import History from "../screens/astrologer/History";
+import AiHistory from "../screens/astrologer/AiHistory";
+import AiHistoryDetails from "../screens/astrologer/AiHistoryDetails";
 import Match from "../screens/match/Match";
 import Detail from "../screens/match/Detail";
 import Kundali from "../screens/kundali/Kundali";
@@ -85,6 +87,8 @@ export default function AuthNavigator() {
         options={({ route }) => ({ title: route?.params?.name || 'Start Chat' })}
       />
       <Stack.Screen name="History" component={History} options={{ headerShown: false }} />
+      <Stack.Screen name="AiHistory" component={AiHistory} options={{ headerShown: false }} />
+      <Stack.Screen name="AiHistoryDetails" component={AiHistoryDetails} options={{ headerShown: false }} />
       <Stack.Screen name="ChatHistory" component={ChatHistory} options={{ headerShown: false }} />
       <Stack.Screen name="AstroChat" component={AstroChat} options={({ route }) => ({ title: route?.params?.name || 'Start Chat' })} />
       <Stack.Screen name="AdminChatHistory" component={AdminChatHistory} options={{ headerShown: false }} />

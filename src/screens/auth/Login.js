@@ -76,48 +76,48 @@ export default function Login({ navigation, route }) {
       const phoneDigits = phone.replace(/\D/g, '');
       let phoneNumber = `+${selectedCountry.code}${phoneDigits}`;
       
-      // const authInstance = getAuth();
-      // const confirm = await signInWithPhoneNumber(authInstance, phoneNumber);
+      const authInstance = getAuth();
+      const confirm = await signInWithPhoneNumber(authInstance, phoneNumber);
       
-      // setConfirmation(confirm);
+      setConfirmation(confirm);
 
-      // navigation.navigate('Otp', {
-      //   phone: phoneDigits,
-      //   country: selectedCountry.code,
-      // });
+      navigation.navigate('Otp', {
+        phone: phoneDigits,
+        country: selectedCountry.code,
+      });
 
 
 
-      const token = Platform.OS === 'android' ? await androidToken() : await iosToken();
-      const response = await loginUser(selectedCountry.code, phoneDigits, token);
-      console.log('Login response:', response);
+      // const token = Platform.OS === 'android' ? await androidToken() : await iosToken();
+      // const response = await loginUser(selectedCountry.code, phoneDigits, token);
+      // console.log('Login response:', response);
 
-      if (response.msg === 'done') {
-        // Save token and user_data to AsyncStorage
-        await AsyncStorage.setItem('token', response.token);
-        await AsyncStorage.setItem('user_data', JSON.stringify(response.user_data));
-        await AsyncStorage.setItem("userId",  JSON.stringify(response.user_data.uid));
-        await AsyncStorage.setItem('loginType', response.user_data.type);
-        if (response.user_data.type == 'user') {
-          // Navigate to Home
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'Home' }],
-          });
-        } else if (response.user_data.type == 'admin') {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'AdminChatHistory' }],
-          });
-        } else {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'ChatHistory' }],
-          });
-        }
-      } else {
-        Alert.alert('Error', response.error || 'Verification failed');
-      }
+      // if (response.msg === 'done') {
+      //   // Save token and user_data to AsyncStorage
+      //   await AsyncStorage.setItem('token', response.token);
+      //   await AsyncStorage.setItem('user_data', JSON.stringify(response.user_data));
+      //   await AsyncStorage.setItem("userId",  JSON.stringify(response.user_data.uid));
+      //   await AsyncStorage.setItem('loginType', response.user_data.type);
+      //   if (response.user_data.type == 'user') {
+      //     // Navigate to Home
+      //     navigation.reset({
+      //       index: 0,
+      //       routes: [{ name: 'Home' }],
+      //     });
+      //   } else if (response.user_data.type == 'admin') {
+      //     navigation.reset({
+      //       index: 0,
+      //       routes: [{ name: 'AdminChatHistory' }],
+      //     });
+      //   } else {
+      //     navigation.reset({
+      //       index: 0,
+      //       routes: [{ name: 'ChatHistory' }],
+      //     });
+      //   }
+      // } else {
+      //   Alert.alert('Error', response.error || 'Verification failed');
+      // }
 
 
 

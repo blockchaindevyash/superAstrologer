@@ -360,7 +360,7 @@ const AstroChat = ({ route, navigation }) => {
           showsVerticalScrollIndicator={false}
         />
       </View>
-      <View style={styles.inputRow}>
+      <View style={[styles.inputRow, {bottom: insets.bottom}]}>
         <TextInput
           ref={inputRef}
           value={input}

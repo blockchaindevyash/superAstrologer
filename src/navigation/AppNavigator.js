@@ -83,7 +83,7 @@ export default function AppNavigator() {
       }
 
       // ---------------- CHAT MESSAGE ----------------
-      if (remoteMessage?.data?.type === "chat_message") {
+      if (remoteMessage?.data?.type === "chat_message" || remoteMessage?.data?.type === "astro_chat_message" || remoteMessage?.data?.type === "admin_chat_message") {
 
         await notifee.displayNotification({
           title: (remoteMessage?.data.senderName) || "New Message",
@@ -103,7 +103,6 @@ export default function AppNavigator() {
 
     return () => {
       unsubscribeForeground(); // ✅ correct
-      unsubscribeBackground(); // ✅ correct
       unsubscribe();
     };
   }, []);
@@ -113,7 +112,7 @@ export default function AppNavigator() {
     const data = notification?.data || notification?.android?.data;
     const userId = await AsyncStorage.getItem("userId");
 
-    if (data?.type != 'chat_message') {
+    if (data?.type != 'chat_message' && data?.type != 'astro_chat_message' && data?.type != 'admin_chat_message') {
       navigationRef.navigate("VideoCallScreen", {
         data: {
           agoraToken: data?.agoraToken,
@@ -121,6 +120,27 @@ export default function AppNavigator() {
           uid: Number(userId),
           name: data?.callerName,
         }
+      });
+    } 
+    if (data?.type === 'chat_message') {
+      navigationRef.navigate("Chat", {
+        astrologer_id: data?.senderId,
+        astrologer: {id: data?.senderId, name: data?.senderName, img: data?.senderImg || null},
+      });
+    }
+    if (data?.type === 'astro_chat_message') {
+      navigationRef.navigate("AstroChat", {
+        name: data?.senderName,
+        astrologer: {id: data?.senderId, name: data?.senderName, img: data?.senderImg || null},
+      });
+    }
+    if (data?.type === 'admin_chat_message') {
+      const extra = JSON.parse(data?.extraInfo || '{}');
+      const hasExtra = Object.keys(extra).length > 0;
+      navigationRef.navigate("AdminMessageList", {
+        name: extra?.name || '',
+        astrologer: hasExtra ? extra : {id: data?.chatId},
+        user: {id: data?.senderId, name: data?.senderName},
       });
     }
     // Cancel notification

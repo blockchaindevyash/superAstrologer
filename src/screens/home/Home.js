@@ -15,7 +15,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import COLORS from '../../config/colors';
 import {Loader,AppStatusBar} from '../../config/service';
-import { fetchHomepageData } from '../../api/api';
+import { fetchHomepageData, logout as apiLogout} from '../../api/api';
 import { OneSignal, LogLevel } from 'react-native-onesignal';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -97,7 +97,14 @@ export default function Home({ navigation }) {
         setCosts(response.cost)
       }
     } catch (error) {
-      console.error('Error loading homepage data:', error)
+      console.error('Error loading homepage data:', error);
+      if (error.response?.data?.message == 'Unauthenticated.') {
+        try {
+          try { await apiLogout(); } catch (_) { }
+          await AsyncStorage.multiRemove(['token', 'userProfile', 'user', 'userData']);
+        } catch (_) { }
+        navigation.reset({ index: 0, routes: [{ name: 'Welcome' }] });
+      }
     }
   }
 
@@ -151,8 +158,8 @@ export default function Home({ navigation }) {
           </View>
         )}
       </View>
-      <ScrollView 
-        style={styles.container} 
+      <ScrollView
+        style={styles.container}
         contentContainerStyle={[styles.scrollContent, activeChats?.length > 0 && { paddingBottom: 100 }]}
         showsVerticalScrollIndicator={false}
       >     

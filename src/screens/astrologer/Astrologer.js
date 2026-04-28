@@ -17,8 +17,10 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { fetchAstrologerData } from '../../api/api';
 import COLORS from '../../config/colors';
 import {Loader,AppStatusBar, BackButton} from '../../config/service';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Astrologer({ navigation }) {
+  const insets = useSafeAreaInsets();
   const [selected, setSelected] = React.useState('All');
   const [categories, setCategories] = React.useState([]);
   const [astrologers, setAstrologers] = React.useState([]);
@@ -76,8 +78,8 @@ export default function Astrologer({ navigation }) {
             'Insufficient Balance',
             'Your wallet balance is lower than per minute cost.',
             [
-              { text: 'Add balance', onPress: () => navigation.navigate('Wallet') },
-              { text: 'Cancel', style: 'cancel' },
+              {text: 'Add balance', onPress: () => navigation.navigate('Wallet')},
+              {text: 'Cancel', style: 'cancel'},
             ],
             { cancelable: true }
           );
@@ -195,7 +197,7 @@ export default function Astrologer({ navigation }) {
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
       <View style={styles.container}>
         <AppStatusBar backgroundColor='#fff' barStyle="dark-content" />
         

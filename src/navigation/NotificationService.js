@@ -38,7 +38,7 @@ console.log("Get setupIncomingCallListener:");
     }
 
     // ---------------- CHAT MESSAGE ----------------
-    if (data?.type === "chat_message") {
+    if (data?.type === "chat_message" || data?.type === "astro_chat_message" || data?.type === "admin_chat_message") {
 
       await notifee.displayNotification({
         title: data.senderName || "New Message",
@@ -84,12 +84,29 @@ console.log("Get setupIncomingCallListener:");
         console.log("Call Rejected");
       }
       // -------- OPEN CHAT --------
-    //   if (detail.pressAction?.id === "open_chat" || type === EventType.PRESS) {
-    //     if (data?.type === "chat_message") {
-    //       if (navigationRef.isReady()) {
-    //       }
-    //     } 
-    //   }
+      if (detail.pressAction?.id === "open_chat" || type === EventType.PRESS) {
+        if (data?.type === 'chat_message') {
+          navigationRef.navigate("Chat", {
+            astrologer_id: data?.senderId,
+            astrologer: {id: data?.senderId, name: data?.senderName, img: data?.senderImg || null},
+          });
+        }
+        if (data?.type === 'astro_chat_message') {
+          navigationRef.navigate("AstroChat", {
+            name: data?.senderName,
+            astrologer: {id: data?.senderId, name: data?.senderName, img: data?.senderImg || null},
+          });
+        }
+        if (data?.type === 'admin_chat_message') {
+          const extra = JSON.parse(data?.extraInfo || '{}');
+          const hasExtra = Object.keys(extra).length > 0;
+          navigationRef.navigate("AdminMessageList", {
+            name: extra?.name || '',
+            astrologer: hasExtra ? extra : {id: data?.chatId},
+            user: {id: data?.senderId, name: data?.senderName},
+          });
+        } 
+      }
 
       await notifee.cancelNotification(detail.notification.id);
     }

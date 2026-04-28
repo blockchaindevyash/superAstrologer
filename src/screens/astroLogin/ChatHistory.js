@@ -57,17 +57,54 @@ const ChatHistory = ({ navigation }) => {
     }
   }
 
+  // const fmtTimeString = (ts) => {
+  //   if (!ts) return ''
+  //   const d = new Date(ts)
+  //   let hrs = d.getHours()
+  //   const mins = d.getMinutes()
+  //   const ampm = hrs >= 12 ? 'PM' : 'AM'
+  //   hrs = hrs % 12
+  //   if (hrs === 0) hrs = 12
+  //   const m = mins < 10 ? `0${mins}` : mins
+  //   return `${hrs}:${m} ${ampm}`
+  // }
+
   const fmtTimeString = (ts) => {
-    if (!ts) return ''
-    const d = new Date(ts)
-    let hrs = d.getHours()
-    const mins = d.getMinutes()
-    const ampm = hrs >= 12 ? 'PM' : 'AM'
-    hrs = hrs % 12
-    if (hrs === 0) hrs = 12
-    const m = mins < 10 ? `0${mins}` : mins
-    return `${hrs}:${m} ${ampm}`
-  }
+    if (!ts) return '';
+
+    const d = new Date(ts);
+    const now = new Date();
+
+    const isToday =
+      d.getDate() === now.getDate() &&
+      d.getMonth() === now.getMonth() &&
+      d.getFullYear() === now.getFullYear();
+
+    const yesterday = new Date();
+    yesterday.setDate(now.getDate() - 1);
+
+    const isYesterday =
+      d.getDate() === yesterday.getDate() &&
+      d.getMonth() === yesterday.getMonth() &&
+      d.getFullYear() === yesterday.getFullYear();
+
+    if (isToday) {
+      let hrs = d.getHours();
+      const mins = d.getMinutes();
+      const ampm = hrs >= 12 ? 'PM' : 'AM';
+
+      hrs = hrs % 12;
+      if (hrs === 0) hrs = 12;
+
+      return `${hrs}:${mins < 10 ? '0' + mins : mins} ${ampm}`;
+    }
+
+    if (isYesterday) {
+      return "Yesterday";
+    }
+
+    return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+  };
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>

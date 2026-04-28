@@ -25,8 +25,10 @@ import video from '../../images/video.png';
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { getFunctions, httpsCallable } from '@react-native-firebase/functions';
 import { getApp } from '@react-native-firebase/app';
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const Chat = ({ route, navigation }) => {
+  const insets = useSafeAreaInsets();
   const { astrologer, walletBalance } = route?.params || {}
   const { id, name, img } = astrologer || {}
   const adminRef = useRef(null);
@@ -51,7 +53,7 @@ const Chat = ({ route, navigation }) => {
   const [pendingAction, setPendingAction] = React.useState(null);
   const [adminData, setAdminData] = React.useState(null);
   const [refresh, setRefresh] = React.useState(false);
-  
+
   const listRef = React.useRef(null)
   const timerRef = React.useRef(null)
   const timerStartRef = React.useRef(null)
@@ -103,7 +105,7 @@ const Chat = ({ route, navigation }) => {
   const handleBackEndChat = (e) => {
     console.log('handleEndChat called, endingChat:', endingChat)
     if (endingChat) return
-    
+
     // Use setTimeout to ensure Alert is shown when Activity is ready
     setTimeout(() => {
       Alert.alert(
@@ -111,8 +113,8 @@ const Chat = ({ route, navigation }) => {
         'Are you sure you want to end this conversation?',
         [
           { text: 'Cancel', style: 'cancel' },
-          { 
-            text: 'End Chat', 
+          {
+            text: 'End Chat',
             style: 'destructive',
             onPress: async () => {
               console.log('End Chat confirmed')
@@ -157,7 +159,7 @@ const Chat = ({ route, navigation }) => {
   const handleEndChat = () => {
     console.log('handleEndChat called, endingChat:', endingChat)
     if (endingChat) return
-    
+
     // Use setTimeout to ensure Alert is shown when Activity is ready
     setTimeout(() => {
       Alert.alert(
@@ -165,8 +167,8 @@ const Chat = ({ route, navigation }) => {
         'Are you sure you want to end this conversation?',
         [
           { text: 'Cancel', style: 'cancel' },
-          { 
-            text: 'End Chat', 
+          {
+            text: 'End Chat',
             style: 'destructive',
             onPress: async () => {
               console.log('End Chat confirmed')
@@ -304,7 +306,7 @@ const Chat = ({ route, navigation }) => {
                 resizeMode: 'contain',
               }} source={video} />
             </TouchableOpacity>
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={handleEndChat}
               disabled={endingChat}
               style={{
@@ -325,7 +327,7 @@ const Chat = ({ route, navigation }) => {
                   style={{ marginRight: 6 }}
                 />
               )}
-              <Text style={{color: '#D32F2F', fontWeight: '700', fontSize: 11}}>
+              <Text style={{ color: '#D32F2F', fontWeight: '700', fontSize: 11 }}>
                 {endingChat ? 'Ending...' : 'End Chat'}
               </Text>
             </TouchableOpacity>
@@ -343,17 +345,17 @@ const Chat = ({ route, navigation }) => {
   }, [navigation, astrologer, session_id, img, name, endingChat, wallet, isEnded])
 
   useEffect(() => {
-  if (!session_id) return;
-  console.log('SessionEnd Back Button', session_id);
-  const unsubscribe = navigation.addListener('beforeRemove', (e) => {
-    // Prevent default behavior (leaving screen)
-    e.preventDefault();
-    
-    // Show your modal
-    handleBackEndChat(e);
-  });
+    if (!session_id) return;
+    console.log('SessionEnd Back Button', session_id);
+    const unsubscribe = navigation.addListener('beforeRemove', (e) => {
+      // Prevent default behavior (leaving screen)
+      e.preventDefault();
 
-  return unsubscribe;
+      // Show your modal
+      handleBackEndChat(e);
+    });
+
+    return unsubscribe;
   }, [navigation, session_id, endingChat, isEnded]);
 
   // on mount: load profile from storage (independent of session history)
@@ -375,7 +377,7 @@ const Chat = ({ route, navigation }) => {
         //     setAvailableTopics(categoryTopics.topics || [])
         //   }
         // }
-        
+
         // // push the profile message
         // const userMsg = {
         //   id: `u${Date.now()}`,
@@ -412,10 +414,13 @@ const Chat = ({ route, navigation }) => {
         // const messagesWithDates = addDateSeparators(apiMessages);
         // Convert to oldest → newest
         if (apiMessages.length === 0) {
-          let userProfile = await AsyncStorage.getItem('userProfile');
-          setInput(`Name = ${userProfile?.name}\nDOB = ${fmtDateString(userProfile?.dob)}\nTime = ${fmtTimeString(userProfile?.time)}\nPlace = ${userProfile?.place}\nGender = ${userProfile?.gender}`);
-          setRefresh(!refresh);
-          sendUserMessage();
+          const userProfileData = await AsyncStorage.getItem('userProfile');
+          if (userProfileData) {
+            const userProfile = JSON.parse(userProfileData);
+            setInput(`Name = ${userProfile?.name}\nDOB = ${fmtDateString(userProfile?.dob)}\nTime = ${fmtTimeString(userProfile?.time)}\nPlace = ${userProfile?.place}\nGender = ${userProfile?.gender}`);
+            setRefresh(!refresh);
+            sendUserMessage();
+          }
         } else {
           const admins = response.data.admin || [];
           const orderedMessages = [...apiMessages].reverse();
@@ -476,7 +481,7 @@ const Chat = ({ route, navigation }) => {
     return newData;
   };
 
-  
+
 
   // If session_id is provided via route params, fetch its history regardless of user profile
   React.useEffect(() => {
@@ -523,7 +528,7 @@ const Chat = ({ route, navigation }) => {
                 dt.setDate(d || 1)
                 dt.setHours(hh || 0, mm || 0, ss || 0, 0)
                 startMs = dt.getTime()
-              } catch {}
+              } catch { }
             }
           }
           startTimer(startMs || undefined)
@@ -544,68 +549,68 @@ const Chat = ({ route, navigation }) => {
     // Ensure backticks or string quotes are used for the URL
     const socket = new WebSocket('wss://single.callingagents.in/app/fskqxclddltkjq0g3zoe?protocol=7&client=mobile&version=1.0');
     if (userProfile?.id) {
-    socket.onopen = () => {
-      console.log("WebSocket connection established. Requesting to join:", astrologer);
-      const subscribeMessage = JSON.stringify({
-        event: "pusher:subscribe",
-        data: {
-          channel: channelName
-        }
-      });
-      socket.send(subscribeMessage);
-    };
+      socket.onopen = () => {
+        console.log("WebSocket connection established. Requesting to join:", astrologer);
+        const subscribeMessage = JSON.stringify({
+          event: "pusher:subscribe",
+          data: {
+            channel: channelName
+          }
+        });
+        socket.send(subscribeMessage);
+      };
 
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log("Raw Socket Event >>", data);
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log("Raw Socket Event >>", data);
 
-      // 3. Log a confirmation when the server lets you into the channel
-      if (data.event === "pusher_internal:subscription_succeeded") {
-        console.log(`✅ Successfully subscribed to ${data.channel}`);
-      }
-
-      if (data.event === "message.sent" || data.event === ".message.sent") {
-         console.log("✅ Adding new message:", data)
-        const actualMessage = JSON.parse(data.data);
-        console.log("✅ Adding new message:", actualMessage)
-        const newMessage = actualMessage.data;
-
-        // Prevent echoing your own message twice if you already appended it locally
-        if (newMessage.sender_id === userProfile?.id) {
-          return;
+        // 3. Log a confirmation when the server lets you into the channel
+        if (data.event === "pusher_internal:subscription_succeeded") {
+          console.log(`✅ Successfully subscribed to ${data.channel}`);
         }
 
-        setMessageList(prevMessages => {
-          const alreadyExists = prevMessages.some(
-            msg => msg.id === newMessage.id
-          );
+        if (data.event === "message.sent" || data.event === ".message.sent") {
+          console.log("✅ Adding new message:", data)
+          const actualMessage = JSON.parse(data.data);
+          console.log("✅ Adding new message:", actualMessage)
+          const newMessage = actualMessage.data;
 
-          if (alreadyExists) {
-            console.log("⚠ Message already exists, skipping:", newMessage.id);
-            return prevMessages;
+          // Prevent echoing your own message twice if you already appended it locally
+          if (newMessage.sender_id === userProfile?.id) {
+            return;
           }
 
-          console.log("✅ Adding new message:", newMessage.id);
+          setMessageList(prevMessages => {
+            const alreadyExists = prevMessages.some(
+              msg => msg.id === newMessage.id
+            );
 
-          return [...prevMessages, newMessage];
-        });
-        setTimeout(() => {
-          listRef.current?.scrollToOffset({
-            offset: 99999,
-            animated: true,
+            if (alreadyExists) {
+              console.log("⚠ Message already exists, skipping:", newMessage.id);
+              return prevMessages;
+            }
+
+            console.log("✅ Adding new message:", newMessage.id);
+
+            return [...prevMessages, newMessage];
           });
-        }, 100);
-      }
-    };
+          setTimeout(() => {
+            listRef.current?.scrollToOffset({
+              offset: 99999,
+              animated: true,
+            });
+          }, 100);
+        }
+      };
 
-    socket.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
+      socket.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
 
-    socket.onclose = () => {
-      console.log("WebSocket connection closed");
-    };
-  }
+      socket.onclose = () => {
+        console.log("WebSocket connection closed");
+      };
+    }
     return () => {
       socket.close();
     };
@@ -615,7 +620,7 @@ const Chat = ({ route, navigation }) => {
   // Function to display messages sequentially
   const displayMessagesSequentially = (responseText) => {
     const messageParts = responseText.split('|').map(part => part.trim()).filter(part => part.length > 0)
-    
+
     if (messageParts.length === 0) return
 
     // Display first message immediately
@@ -668,7 +673,7 @@ const Chat = ({ route, navigation }) => {
     setTimeout(() => {
       setTyping(true)
     }, 1000)
-    
+
     try {
       // Format user info for API
       const formatDateForAPI = (dateStr) => {
@@ -679,7 +684,7 @@ const Chat = ({ route, navigation }) => {
         const day = String(d.getDate()).padStart(2, '0')
         return `${year}-${month}-${day}`
       }
-      
+
       const formatTimeForAPI = (timeStr) => {
         if (!timeStr) return ''
         const d = new Date(timeStr)
@@ -741,7 +746,7 @@ const Chat = ({ route, navigation }) => {
   //   const txt = input.trim()
   //   if (!txt) return
   //   if (isEnded) return
-    
+
   //   const msg = {id: `u${Date.now()}`, from: 'user', text: txt, time: Date.now()}
   //   setMessages(prev => [...prev, msg])
   //   setInput('')
@@ -750,24 +755,24 @@ const Chat = ({ route, navigation }) => {
   //   setTimeout(() => {
   //     setTyping(true)
   //   }, 1000)
-    
+
   //   try {
   //     const response = await sendMessage(session_id, txt)
 
   //     setTyping(false)
-      
+
   //     // Update wallet balance if returned in response
   //     if (response?.balance !== undefined) {
   //       setWallet(response.balance)
   //     }
-      
+
   //     if (response?.error) {
   //       showWalletAlert(response.error)
   //       setIsEnded(true)
   //       stopTimer()
   //       return
   //     }
-      
+
   //     if (response.message) {
   //       displayMessagesSequentially(response.message)
   //     } else {
@@ -880,11 +885,12 @@ const Chat = ({ route, navigation }) => {
                   }
                 },
                 data: {
-                  type: "chat_message",
+                  type: "astro_chat_message",
                   senderId: String(userProfile?.id),
                   senderName: userProfile?.name,
                   chatId: String(receiverData?.id),
                   message: response.data.data?.message,
+                  extraInfo: JSON.stringify(receiverData)
                 }
               }
             }),
@@ -892,46 +898,47 @@ const Chat = ({ route, navigation }) => {
         );
 
         const notifyPromises = admins
-      .filter(admin => 
-        admin?.push_notification && 
-        admin?.id !== userProfile?.id // skip self if needed
-      )
-      .map(admin =>
-        fetch(
-          "https://fcm.googleapis.com/v1/projects/super-astro-8243f/messages:send",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify({
-              message: {
-                token: admin.push_notification,
-                android: {
-                  priority: "high",
+          .filter(admin =>
+            admin?.push_notification &&
+            admin?.id !== userProfile?.id // skip self if needed
+          )
+          .map(admin =>
+            fetch(
+              "https://fcm.googleapis.com/v1/projects/super-astro-8243f/messages:send",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${accessToken}`,
                 },
-                apns: {
-                  payload: {
-                    aps: {
-                      sound: "default"
+                body: JSON.stringify({
+                  message: {
+                    token: admin.push_notification,
+                    android: {
+                      priority: "high",
+                    },
+                    apns: {
+                      payload: {
+                        aps: {
+                          sound: "default"
+                        }
+                      }
+                    },
+                    data: {
+                      type: "admin_chat_message",
+                      senderId: String(userProfile?.id),
+                      senderName: userProfile?.name,
+                      chatId: String(receiverData?.id),
+                      message: response.data.data?.message,
+                      extraInfo: JSON.stringify(receiverData)
                     }
                   }
-                },
-                data: {
-                  type: "chat_message",
-                  senderId: String(userProfile?.id),
-                  senderName: userProfile?.name,
-                  chatId: String(receiverData?.id),
-                  message: response.data.data?.message,
-                }
+                }),
               }
-            }),
-          }
-        )
-      );
+            )
+          );
 
-    await Promise.all(notifyPromises); // 🚀 parallel calls
+        await Promise.all(notifyPromises); // 🚀 parallel calls
       }
     } catch (error) {
       console.log('onSendMessage Error:', error);
@@ -968,29 +975,29 @@ const Chat = ({ route, navigation }) => {
   }
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
       {/* <KeyboardAvoidingView style={styles.wrapper} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}> */}
-        <View style={styles.topBar}>
-          <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: isEnded ? '#9E9E9E' : '#4CAF50', marginRight: 8 }} />
-          <Text style={{ fontSize: 13, fontWeight: '600', color: isEnded ? '#9E9E9E' : '#4CAF50', flex: 1 }}>{isEnded ? 'Ended' : 'Live'}</Text>
-          <Text style={styles.timerText}>{formatElapsed(elapsed)}</Text>
-        </View>
-        <View style={styles.chatArea}>
-          <FlatList
-            ref={listRef}
-            data={messageList}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderItem}
-            contentContainerStyle={{paddingBottom: 140}}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps={'handled'}
-            maintainVisibleContentPosition={{
-              minIndexForVisible: 1,
-            }}
-            bounces={false}
-          />
+      <View style={styles.topBar}>
+        <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: isEnded ? '#9E9E9E' : '#4CAF50', marginRight: 8 }} />
+        <Text style={{ fontSize: 13, fontWeight: '600', color: isEnded ? '#9E9E9E' : '#4CAF50', flex: 1 }}>{isEnded ? 'Ended' : 'Live'}</Text>
+        <Text style={styles.timerText}>{formatElapsed(elapsed)}</Text>
+      </View>
+      <View style={styles.chatArea}>
+        <FlatList
+          ref={listRef}
+          data={messageList}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+          contentContainerStyle={{ paddingBottom: 140 }}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps={'handled'}
+          maintainVisibleContentPosition={{
+            minIndexForVisible: 1,
+          }}
+          bounces={false}
+        />
 
-          {/* {typing && (
+        {/* {typing && (
             <View style={[styles.msgRow, styles.msgRowLeft]}>
               {img && <Image source={{ uri: img }} style={{ width: 32, height: 32, borderRadius: 16, marginRight: 8, marginBottom: 2 }} />}
               <View style={[styles.bubble, styles.astroBubble, { paddingVertical: 8 }]}>
@@ -998,9 +1005,9 @@ const Chat = ({ route, navigation }) => {
               </View>
             </View>
           )} */}
-        </View>
+      </View>
 
-        {/* {showTopics && availableTopics.length > 0 && (
+      {/* {showTopics && availableTopics.length > 0 && (
           <View style={styles.topicsContainer}>
             <Text style={styles.topicsHeader}>Select a topic to start:</Text>
             <ScrollView 
@@ -1022,27 +1029,27 @@ const Chat = ({ route, navigation }) => {
           </View>
         )} */}
 
-        {/* {!showTopics && ( */}
-          <View style={styles.inputRow}>
-            <TextInput
-              ref={inputRef}
-              value={input}
-              onChangeText={setInput}
-              placeholder={"Type your message..."}
-              style={styles.input}
-              placeholderTextColor="#A0A0A0"
-              multiline
-            />
-            <TouchableOpacity 
-              style={[styles.sendBtn]} 
-              onPress={sendUserMessage} 
-              activeOpacity={0.8}
-              disabled={messageLoading || !input.trim()}
-            >
-              <Text style={styles.sendText}>➤</Text>
-            </TouchableOpacity>
-          </View>
-        {/* )} */}
+      {/* {!showTopics && ( */}
+      <View style={[styles.inputRow, { bottom: insets.bottom }]}>
+        <TextInput
+          ref={inputRef}
+          value={input}
+          onChangeText={setInput}
+          placeholder={"Type your message..."}
+          style={styles.input}
+          placeholderTextColor="#A0A0A0"
+          multiline
+        />
+        <TouchableOpacity
+          style={[styles.sendBtn]}
+          onPress={sendUserMessage}
+          activeOpacity={0.8}
+          disabled={messageLoading || !input.trim()}
+        >
+          <Text style={styles.sendText}>➤</Text>
+        </TouchableOpacity>
+      </View>
+      {/* )} */}
       {/* </KeyboardAvoidingView> */}
     </SafeAreaView>
   )
@@ -1071,10 +1078,10 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#1A1A1A',
   },
-  topBar: { 
-    height: 40, 
-    alignItems: 'center', 
-    flexDirection: 'row', 
+  topBar: {
+    height: 40,
+    alignItems: 'center',
+    flexDirection: 'row',
     paddingHorizontal: 16,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
@@ -1087,10 +1094,10 @@ const styles = StyleSheet.create({
   msgRow: { flexDirection: 'row', marginVertical: 8, alignItems: 'flex-end' },
   msgRowLeft: { justifyContent: 'flex-start' },
   msgRowRight: { justifyContent: 'flex-end' },
-  bubble: { 
-    maxWidth: '82%', 
-    paddingVertical: 12, 
-    paddingHorizontal: 16, 
+  bubble: {
+    maxWidth: '82%',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     borderRadius: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -1098,14 +1105,14 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 1,
   },
-  astroBubble: { 
-    backgroundColor: '#FFFFFF', 
+  astroBubble: {
+    backgroundColor: '#FFFFFF',
     borderBottomLeftRadius: 4,
     borderWidth: 1,
     borderColor: '#F0F0F0'
   },
-  userBubble: { 
-    backgroundColor: '#E7F9E7', 
+  userBubble: {
+    backgroundColor: '#E7F9E7',
     borderBottomRightRadius: 4,
     borderWidth: 1,
     borderColor: '#D4EED4'
@@ -1122,69 +1129,69 @@ const styles = StyleSheet.create({
     color: '#76A076',
     textAlign: 'right',
   },
-  topicsContainer: { 
-    backgroundColor: '#fff', 
-    borderTopWidth: 1, 
-    borderTopColor: '#F0F0F0', 
+  topicsContainer: {
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#F0F0F0',
     paddingVertical: 16,
     paddingHorizontal: 10,
   },
-  topicsHeader: { 
-    fontSize: 14, 
-    fontWeight: '700', 
-    color: '#1A1A1A', 
+  topicsHeader: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#1A1A1A',
     marginBottom: 12,
     paddingHorizontal: 10,
   },
-  topicsScroll: { 
+  topicsScroll: {
     paddingHorizontal: 6,
   },
-  topicChip: { 
-    backgroundColor: '#FFF4F1', 
-    paddingHorizontal: 18, 
-    paddingVertical: 10, 
-    borderRadius: 25, 
+  topicChip: {
+    backgroundColor: '#FFF4F1',
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 25,
     marginRight: 10,
     borderWidth: 1,
     borderColor: '#FFE0D6',
   },
-  topicChipText: { 
-    color: '#FF5722', 
-    fontSize: 13, 
+  topicChipText: {
+    color: '#FF5722',
+    fontSize: 13,
     fontWeight: '600',
   },
-  inputRow: { 
+  inputRow: {
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    flexDirection: 'row', 
-    padding: 12, 
+    flexDirection: 'row',
+    padding: 12,
     paddingBottom: Platform.OS === 'ios' ? 25 : 12,
-    borderTopWidth: 1, 
-    borderTopColor: '#F0F0F0', 
+    borderTopWidth: 1,
+    borderTopColor: '#F0F0F0',
     backgroundColor: '#fff',
     alignItems: 'center'
   },
-  input: { 
-    flex: 1, 
-    minHeight: 44, 
-    maxHeight: 120, 
-    paddingHorizontal: 16, 
-    paddingVertical: 10, 
-    backgroundColor: '#F7F8FA', 
-    borderRadius: 22, 
-    borderWidth: 1, 
+  input: {
+    flex: 1,
+    minHeight: 44,
+    maxHeight: 120,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    backgroundColor: '#F7F8FA',
+    borderRadius: 22,
+    borderWidth: 1,
     borderColor: '#E8E8E8',
     fontSize: 15,
     color: '#333'
   },
-  sendBtn: { 
-    marginLeft: 10, 
+  sendBtn: {
+    marginLeft: 10,
     width: 44,
     height: 44,
-    borderRadius: 22, 
-    backgroundColor: '#FF5722', 
-    alignItems: 'center', 
+    borderRadius: 22,
+    backgroundColor: '#FF5722',
+    alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#FF5722',
     shadowOffset: { width: 0, height: 2 },

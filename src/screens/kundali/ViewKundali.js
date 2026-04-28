@@ -133,10 +133,9 @@ Generated from AstroTalky
         {personalDetails && (
           <View style={styles.detailsCard}>
             <View style={styles.cardHeader}>
-              <MaterialIcons name="person" size={20} color={COLORS.primary} />
+              <MaterialIcons name="person" size={20} color={COLORS.primary}/>
               <Text style={styles.cardHeaderTitle}>Personal Profile</Text>
             </View>
-            
             <View style={styles.detailsGrid}>
               <View style={styles.detailItem}>
                 <Text style={styles.detailLabel}>Name</Text>

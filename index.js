@@ -40,7 +40,7 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
         });
     }
 
-  if (remoteMessage?.data?.type === "chat_message") {
+  if (remoteMessage?.data?.type === "chat_message" || remoteMessage?.data?.type === "astro_chat_message" || remoteMessage?.data?.type === "admin_chat_message") {
         await AsyncStorage.setItem(
           "OPEN_CHAT_DATA",
           JSON.stringify(remoteMessage.data)
@@ -77,7 +77,7 @@ notifee.onBackgroundEvent(async ({ type, detail }) => {
             await AsyncStorage.removeItem("INCOMING_CALL_DATA");
         }
         if (detail.pressAction?.id === "open_chat" || type === EventType.PRESS) {
-            if (data?.type === "chat_message") {
+            if (data?.type === "chat_message" || data?.type === "astro_chat_message" || data?.type === "admin_chat_message") {
                 await AsyncStorage.setItem(
                     "OPEN_CHAT_DATA",
                     JSON.stringify(data)

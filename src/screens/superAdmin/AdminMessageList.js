@@ -168,7 +168,7 @@ const AdminMessageList = ({ route, navigation }) => {
     return () => {
       socket.close();
     };
-  }, [userProfile?.id]);
+  }, [astrologer?.id]);
 
   async function getAccessToken() {
     try {
@@ -251,8 +251,8 @@ const AdminMessageList = ({ route, navigation }) => {
                 },
                 data: {
                   type: "chat_message",
-                  senderId: String(userProfile?.id),
-                  senderName: userProfile?.name,
+                  senderId: String(astrologer?.id),
+                  senderName: astrologer?.name,
                   chatId: String(receiverData?.id),
                   message: response.data.data?.message,
                 }
@@ -315,7 +315,7 @@ const AdminMessageList = ({ route, navigation }) => {
             showsVerticalScrollIndicator={false}
           />
         </View>
-        <View style={styles.inputRow}>
+        <View style={[styles.inputRow, {bottom: insets.bottom}]}>
           <TextInput
             ref={inputRef}
             value={input}
