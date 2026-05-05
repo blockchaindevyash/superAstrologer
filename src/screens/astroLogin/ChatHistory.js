@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   RefreshControl,
+  TextInput,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import COLORS from '../../config/colors';
@@ -22,6 +23,8 @@ const ChatHistory = ({ navigation }) => {
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState(null)
   const [profile, setProfile] = React.useState(null)
+  const [filterHistory, setFilterHistory] = React.useState([]);
+  const [search, setSearch] = React.useState('');
 
   React.useEffect(() => {
     let mounted = true
@@ -50,6 +53,7 @@ const ChatHistory = ({ navigation }) => {
       const res = await fetchChatList()
       const items = Array.isArray(res?.data) ? res.data : []
       setHistory(items)
+      setFilterHistory(items);
     } catch (e) {
       setError('Failed to load history')
     } finally {
@@ -106,6 +110,19 @@ const ChatHistory = ({ navigation }) => {
     return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
   };
 
+  const onSearch = (text) => {
+    console.log('search', text);
+    setSearch(text);
+    if (text === '') {
+      setFilterHistory(history);
+      return;
+    }
+    const filtered = history.filter(item =>
+      item?.user?.name?.toLowerCase().includes(text.toLowerCase())
+    );
+    setFilterHistory(filtered);
+  };
+
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
       <AppStatusBar />
@@ -138,12 +155,19 @@ const ChatHistory = ({ navigation }) => {
         </View>
       ) : (
         <ScrollView contentContainerStyle={styles.content} refreshControl={
-                  <RefreshControl refreshing={loading} onRefresh={load} />
-                }>
-          {history.length === 0 && (
+          <RefreshControl refreshing={loading} onRefresh={load} />
+        }>
+          <TextInput
+            value={search}
+            placeholder={'Search...'}
+            placeholderTextColor={COLORS.greyColor}
+            onChangeText={onSearch}
+            style={[styles.searchView, { color: COLORS.black }]}
+          />
+          {filterHistory.length === 0 && (
             <Text style={{ color: COLORS.muted }}>No history available.</Text>
           )}
-          {history.map((item) => (
+          {filterHistory.map((item) => (
             <TouchableOpacity style={styles.chatDataView} onPress={() => navigation.navigate('AstroChat', { astrologer: item?.user, name: item.user.name })}>
               <View style={{ width: '15%' }}>
                 {item?.img ? (
@@ -378,5 +402,18 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '400',
     color: COLORS.greyColor,
+  },
+  searchView: {
+    width: '100%',
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    borderWidth: 1,
+    borderColor: COLORS.greyColor,
+    fontFamily: '500',
+    fontSize: 17,
+    color: COLORS.black,
+    borderRadius: 5,
+    alignSelf: 'center',
+    marginBottom: 10,
   },
 });

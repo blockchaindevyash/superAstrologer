@@ -52,7 +52,7 @@ const Wallet = ({ navigation }) => {
   const [quickAmounts, setQuickAmounts] = useState([50, 100, 200, 500]);
   const [transactions, setTransactions] = useState([]);
   const [products, setProducts] = useState([]);
-  const [inAppAmounts, setInAppAmounts] = useState([99, 499, 999]);
+  const [inAppAmounts, setInAppAmounts] = useState([100, 500, 1000]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -127,7 +127,7 @@ const Wallet = ({ navigation }) => {
     try {
       const items = await RNIap.getProducts({ skus: PRODUCT_IDS });
       console.log("Products:", items);
-      alert(JSON.stringify(items));
+      // alert(JSON.stringify(items));
       setProducts(items);
     } catch (err) {
       console.log(err);
@@ -163,10 +163,10 @@ const Wallet = ({ navigation }) => {
 
   const handleProceed = async () => {
     try {
-      // if (Platform.OS === 'ios') {
-      //   buyProduct(buyProduct);
-      //   return;
-      // }
+      if (Platform.OS === 'ios') {
+        buyProduct(`astro_${amount}_credits`);
+        return;
+      }
       if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
         return;
       }
@@ -331,7 +331,7 @@ const Wallet = ({ navigation }) => {
           {activeTab === 'add' ? (
             <View style={styles.content}>
               <View style={styles.card}>
-                {/* {Platform.OS === 'ios' ? (
+                {Platform.OS === 'ios' ? (
                   <View style={styles.quickAmountGrid}>
                   {inAppAmounts.map((val) => (
                     <TouchableOpacity
@@ -348,7 +348,7 @@ const Wallet = ({ navigation }) => {
                   ))}
                   </View>
                 ) : (
-                <> */}
+                <>
                 <Text style={styles.cardLabel}>Enter Amount ({currency}) & min {currency}40</Text>
                 <View style={styles.inputWrapper}>
                   <Text style={styles.inputPrefix}>{currency}</Text>
@@ -377,8 +377,8 @@ const Wallet = ({ navigation }) => {
                     </TouchableOpacity>
                   ))}
                 </View>
-               {/* </>
-               )} */}
+               </>
+               )}
                 {/* <Text style={[styles.cardLabel, { marginTop: 24 }]}>Select Payment Method</Text>
               <TouchableOpacity 
                 style={[styles.paymentOption, paymentMethod === 'upi' && styles.paymentOptionActive]}

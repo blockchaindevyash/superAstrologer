@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   RefreshControl,
+  TextInput,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import COLORS from '../../config/colors';
@@ -23,6 +24,8 @@ const AdminChatHistory = ({ navigation }) => {
   const [error, setError] = React.useState(null)
   const [profile, setProfile] = React.useState(null)
   const [refreshing, setRefreshing] = React.useState(false);
+  const [filterHistory, setFilterHistory] = React.useState([]);
+  const [search, setSearch] = React.useState('');
 
   React.useEffect(() => {
     let mounted = true
@@ -67,6 +70,7 @@ const AdminChatHistory = ({ navigation }) => {
         const items = Array.isArray(res?.data?.data) ? res.data?.data : []
         console.log('Get History Data:', items);
         setHistory(items)
+        setFilterHistory(items);
       }
     } catch (e) {
       setError('Failed to load history')
@@ -86,8 +90,8 @@ const AdminChatHistory = ({ navigation }) => {
   //   const m = mins < 10 ? `0${mins}` : mins
   //   return `${hrs}:${m} ${ampm}`
   // }
-  
-  
+
+
   // const fmtTimeString = (ts) => {
   //   if (!ts) return '';
 
@@ -123,41 +127,64 @@ const AdminChatHistory = ({ navigation }) => {
 
 
   const fmtTimeString = (ts) => {
-  if (!ts) return '';
+    if (!ts) return '';
 
-  const d = new Date(ts);
-  const now = new Date();
+    const d = new Date(ts);
+    const now = new Date();
 
-  const isToday =
-    d.getDate() === now.getDate() &&
-    d.getMonth() === now.getMonth() &&
-    d.getFullYear() === now.getFullYear();
+    const isToday =
+      d.getDate() === now.getDate() &&
+      d.getMonth() === now.getMonth() &&
+      d.getFullYear() === now.getFullYear();
 
-  const yesterday = new Date();
-  yesterday.setDate(now.getDate() - 1);
+    const yesterday = new Date();
+    yesterday.setDate(now.getDate() - 1);
 
-  const isYesterday =
-    d.getDate() === yesterday.getDate() &&
-    d.getMonth() === yesterday.getMonth() &&
-    d.getFullYear() === yesterday.getFullYear();
+    const isYesterday =
+      d.getDate() === yesterday.getDate() &&
+      d.getMonth() === yesterday.getMonth() &&
+      d.getFullYear() === yesterday.getFullYear();
 
-  if (isToday) {
-    let hrs = d.getHours();
-    const mins = d.getMinutes();
-    const ampm = hrs >= 12 ? 'PM' : 'AM';
+    if (isToday) {
+      let hrs = d.getHours();
+      const mins = d.getMinutes();
+      const ampm = hrs >= 12 ? 'PM' : 'AM';
 
-    hrs = hrs % 12;
-    if (hrs === 0) hrs = 12;
+      hrs = hrs % 12;
+      if (hrs === 0) hrs = 12;
 
-    return `${hrs}:${mins < 10 ? '0' + mins : mins} ${ampm}`;
-  }
+      return `${hrs}:${mins < 10 ? '0' + mins : mins} ${ampm}`;
+    }
 
-  if (isYesterday) {
-    return "Yesterday";
-  }
+    if (isYesterday) {
+      return "Yesterday";
+    }
 
-  return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
-};
+    return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+  };
+
+  const onSearch = (text) => {
+    setSearch(text);
+
+    if (!text) {
+      setFilterHistory(history);
+      return;
+    }
+
+    const searchText = text.toLowerCase();
+
+    const filtered = history.filter(item => {
+      const isAstrologer = item?.sender?.user_type === 'astrologer';
+
+      const nameToSearch = isAstrologer
+        ? item?.receiver?.name   // 🔥 if sender is astrologer
+        : item?.sender?.name;    // 🔥 otherwise sender
+
+      return nameToSearch?.toLowerCase().includes(searchText);
+    });
+
+    setFilterHistory(filtered);
+  };
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
@@ -191,10 +218,17 @@ const AdminChatHistory = ({ navigation }) => {
         <ScrollView contentContainerStyle={styles.content} refreshControl={
           <RefreshControl refreshing={loading} onRefresh={load} />
         }>
-          {history.length === 0 && (
+          <TextInput
+            value={search}
+            placeholder={'Search...'}
+            placeholderTextColor={COLORS.greyColor}
+            onChangeText={onSearch}
+            style={[styles.searchView, { color: COLORS.black }]}
+          />
+          {filterHistory.length === 0 && (
             <Text style={{ color: COLORS.muted }}>No history available.</Text>
           )}
-          {history.map((item) => (
+          {filterHistory.map((item) => (
             <TouchableOpacity
               style={styles.chatDataView}
               onPress={() => navigation.navigate('AdminMessageList', { name: item?.sender.user_type != 'astrologer' ? item?.sender.name : item.receiver.name, astrologer: item?.sender.user_type == 'astrologer' ? item?.sender : item.receiver, user: item?.sender.user_type != 'astrologer' ? item?.sender : item.receiver })}>
@@ -208,7 +242,7 @@ const AdminChatHistory = ({ navigation }) => {
               <View style={styles.chatSubView}>
                 <View style={{ width: '80%' }}>
                   <View style={styles.chatNameView}>
-                    <Text style={styles.nameText} numberOfLines={1}>{item?.sender.user_type != 'astrologer' ?`${item.receiver?.name} - ${item.sender?.name}` : `${item.sender?.name} - ${item.receiver?.name}`}</Text>
+                    <Text style={styles.nameText} numberOfLines={1}>{item?.sender.user_type != 'astrologer' ? `${item.receiver?.name} - ${item.sender?.name}` : `${item.sender?.name} - ${item.receiver?.name}`}</Text>
                     <Text style={styles.lastMessageText}>{fmtTimeString(item.last_message_time)}</Text>
                   </View>
                   <Text style={styles.lastMessageText} numberOfLines={1}>{item.last_message}</Text>
@@ -426,5 +460,18 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '400',
     color: COLORS.greyColor,
+  },
+  searchView: {
+    width: '100%',
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    borderWidth: 1,
+    borderColor: COLORS.greyColor,
+    fontFamily: '500',
+    fontSize: 17,
+    color: COLORS.black,
+    borderRadius: 5,
+    alignSelf: 'center',
+    marginBottom: 10,
   },
 });

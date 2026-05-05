@@ -296,7 +296,7 @@
 				CODE_SIGN_ENTITLEMENTS = astro_new/astro_new.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = GP4N3SFTVA;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = astro_new/Info.plist;
@@ -330,7 +330,7 @@
 				CODE_SIGN_ENTITLEMENTS = astro_new/astro_new.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = GP4N3SFTVA;
 				INFOPLIST_FILE = astro_new/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Super Astro : Talk Astrologer";

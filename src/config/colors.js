@@ -7,6 +7,8 @@ const COLORS = {
   border: '#E5E7EB',
   success: '#22C55E',
   danger: '#EF4444',
+  greyColor: '#8f9195',
+  black: '#000000',
 };
 
 export default COLORS;

@@ -22,7 +22,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import COLORS from '../../config/colors';
 import { BackButton } from '../../config/service';
 import { loginUser } from '../../api/api';
-import {getAuth, signInWithPhoneNumber} from '@react-native-firebase/auth';
+import { getAuth, signInWithPhoneNumber } from '@react-native-firebase/auth';
 import { setConfirmation } from './firebaseConfirm';
 import messaging from '@react-native-firebase/messaging';
 
@@ -75,10 +75,10 @@ export default function Login({ navigation, route }) {
       setLoading(true);
       const phoneDigits = phone.replace(/\D/g, '');
       let phoneNumber = `+${selectedCountry.code}${phoneDigits}`;
-      
+
       const authInstance = getAuth();
       const confirm = await signInWithPhoneNumber(authInstance, phoneNumber);
-      
+
       setConfirmation(confirm);
 
       navigation.navigate('Otp', {
@@ -144,134 +144,133 @@ export default function Login({ navigation, route }) {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-    <SafeAreaView style={styles.container}>
-      
+      <SafeAreaView style={styles.container}>
 
-      {/* Header */}
-      <View style={styles.header}>
-        <BackButton navigation={navigation}/>
-      </View>
 
-      {/* Content */}
-      <View style={styles.content}>
-        {/* Title */}
-        <View style={styles.titleBlock}>
-          <Text style={styles.title}>Enter your mobile number</Text>
-          <Text style={styles.subtitle}>
-            We'll send you a verification code to confirm your identity.
-            Standard rates may apply.
-          </Text>
+        {/* Header */}
+        <View style={styles.header}>
+          <BackButton navigation={navigation} />
         </View>
 
-        {/* Phone Input */}
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Phone Number</Text>
-
-          <View style={styles.phoneWrapper}>
-            {/* Country Code */}
-            <TouchableOpacity 
-              style={styles.countryBox}
-              onPress={() => setShowPicker(true)}
-            >
-              <Text style={styles.countryCode}>+{selectedCountry.code}</Text>
-              <Icon name="expand-more" size={18} color={GRAY} />
-            </TouchableOpacity>
-            {/* Input */}
-            <TextInput
-              placeholder="000-000-0000"
-              placeholderTextColor="#c7c7c7"
-              keyboardType="phone-pad"
-              returnKeyType="done"
-              style={styles.input}
-              value={phone}
-              onChangeText={(text) => {
-                setPhone(text);
-                setError('');
-              }}
-              maxLength={15}
-            />
-            <Icon name="call" size={20} color={GRAY} style={styles.callIcon} />
+        {/* Content */}
+        <View style={styles.content}>
+          {/* Title */}
+          <View style={styles.titleBlock}>
+            <Text style={styles.title}>Enter your mobile number</Text>
+            <Text style={styles.subtitle}>
+              We'll send you a verification code to confirm your identity.
+              Standard rates may apply.
+            </Text>
           </View>
-          {error ? <Text style={styles.errorText}>{error}</Text> : null}
-        </View>
 
-        <View style={{ flex: 1 }} />
+          {/* Phone Input */}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Phone Number</Text>
 
-        {/* Footer */}
-        <View style={styles.footer}>
-          <TouchableOpacity 
-            style={[styles.continueButton, loading && styles.continueButtonDisabled]}
-            onPress={handleContinue}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="#fff" size="small" />
-            ) : (
-              <>
-                <Text style={styles.continueText}>Continue</Text>
-                <Icon name="arrow-forward" size={22} color="#fff" />
-              </>
-            )}
-          </TouchableOpacity>
-
-          <Text style={styles.terms}>
-            By clicking "Continue", you agree to our{' '}
-            <Text 
-              style={styles.link}
-              onPress={() => terms && Linking.openURL(terms)}
-            >
-              Terms of Service
-            </Text> and{' '}
-            <Text 
-              style={styles.link}
-              onPress={() => privacy && Linking.openURL(privacy)}
-            >
-              Privacy Policy
-            </Text>.
-          </Text>
-        </View>
-      </View>
-
-      {/* Country Picker Modal */}
-      <Modal
-        visible={showPicker}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setShowPicker(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Select Country Code</Text>
-              <TouchableOpacity onPress={() => setShowPicker(false)}>
-                <Icon name="close" size={24} color={TEXT_DARK} />
+            <View style={styles.phoneWrapper}>
+              {/* Country Code */}
+              <TouchableOpacity
+                style={styles.countryBox}
+                onPress={() => setShowPicker(true)}>
+                <Text style={styles.countryCode}>+{selectedCountry.code}</Text>
+                <Icon name="expand-more" size={18} color={GRAY} />
               </TouchableOpacity>
+              {/* Input */}
+              <TextInput
+                placeholder="000-000-0000"
+                placeholderTextColor="#c7c7c7"
+                keyboardType="phone-pad"
+                returnKeyType="done"
+                style={styles.input}
+                value={phone}
+                onChangeText={(text) => {
+                  setPhone(text);
+                  setError('');
+                }}
+                maxLength={15}
+              />
+              <Icon name="call" size={20} color={GRAY} style={styles.callIcon} />
             </View>
-            <FlatList
-              data={countryList}
-              keyExtractor={(item) => item.code}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.countryItem}
-                  onPress={() => {
-                    setSelectedCountry(item);
-                    setShowPicker(false);
-                  }}
-                >
-                  <Text style={styles.countryName}>{item.name}</Text>
-                  <Text style={styles.countryCodeText}>+{item.code}</Text>
-                </TouchableOpacity>
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+          </View>
+
+          <View style={{ flex: 1 }} />
+
+          {/* Footer */}
+          <View style={styles.footer}>
+            <TouchableOpacity
+              style={[styles.continueButton, loading && styles.continueButtonDisabled]}
+              onPress={handleContinue}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" size="small" />
+              ) : (
+                <>
+                  <Text style={styles.continueText}>Continue</Text>
+                  <Icon name="arrow-forward" size={22} color="#fff" />
+                </>
               )}
-            />
+            </TouchableOpacity>
+
+            <Text style={styles.terms}>
+              By clicking "Continue", you agree to our{' '}
+              <Text
+                style={styles.link}
+                onPress={() => terms && Linking.openURL(terms)}
+              >
+                Terms of Service
+              </Text> and{' '}
+              <Text
+                style={styles.link}
+                onPress={() => privacy && Linking.openURL(privacy)}
+              >
+                Privacy Policy
+              </Text>.
+            </Text>
           </View>
         </View>
-      </Modal>
 
-      {/* iOS Home Indicator */}
-      <View style={styles.homeIndicatorWrapper}>
-        <View style={styles.homeIndicator} />
-      </View>
-    </SafeAreaView>
+        {/* Country Picker Modal */}
+        <Modal
+          visible={showPicker}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={() => setShowPicker(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Select Country Code</Text>
+                <TouchableOpacity onPress={() => setShowPicker(false)}>
+                  <Icon name="close" size={24} color={TEXT_DARK} />
+                </TouchableOpacity>
+              </View>
+              <FlatList
+                data={countryList}
+                keyExtractor={(item) => item.code}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={styles.countryItem}
+                    onPress={() => {
+                      setSelectedCountry(item);
+                      setShowPicker(false);
+                    }}
+                  >
+                    <Text style={styles.countryName}>{item.name}</Text>
+                    <Text style={styles.countryCodeText}>+{item.code}</Text>
+                  </TouchableOpacity>
+                )}
+              />
+            </View>
+          </View>
+        </Modal>
+
+        {/* iOS Home Indicator */}
+        <View style={styles.homeIndicatorWrapper}>
+          <View style={styles.homeIndicator} />
+        </View>
+      </SafeAreaView>
     </TouchableWithoutFeedback>
   );
 }
