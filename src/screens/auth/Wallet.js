@@ -333,52 +333,52 @@ const Wallet = ({ navigation }) => {
               <View style={styles.card}>
                 {Platform.OS === 'ios' ? (
                   <View style={styles.quickAmountGrid}>
-                  {inAppAmounts.map((val) => (
-                    <TouchableOpacity
-                      key={val}
-                      style={[styles.quickAmountBtn, quickAmount === val && styles.quickAmountBtnActive]}
-                      onPress={() => {
-                        setQuickAmount(val);
-                        setAmount(String(val));
-                      }}>
-                      <Text style={[styles.quickAmountText, quickAmount === val && styles.quickAmountTextActive]}>
-                        {currency}{val}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
+                    {inAppAmounts.map((val) => (
+                      <TouchableOpacity
+                        key={val}
+                        style={[styles.quickAmountBtn, quickAmount === val && styles.quickAmountBtnActive]}
+                        onPress={() => {
+                          setQuickAmount(val);
+                          setAmount(String(val));
+                        }}>
+                        <Text style={[styles.quickAmountText, quickAmount === val && styles.quickAmountTextActive]}>
+                          {currency}{val}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
                   </View>
                 ) : (
-                <>
-                <Text style={styles.cardLabel}>Enter Amount ({currency}) & min {currency}40</Text>
-                <View style={styles.inputWrapper}>
-                  <Text style={styles.inputPrefix}>{currency}</Text>
-                  <TextInput
-                    style={styles.amountInput}
-                    value={amount}
-                    onChangeText={setAmount}
-                    keyboardType="numeric"
-                    placeholder="0.00"
-                    placeholderTextColor="#94A3B8"
-                  />
-                </View>
+                  <>
+                    <Text style={styles.cardLabel}>Enter Amount ({currency}) & min {currency}40</Text>
+                    <View style={styles.inputWrapper}>
+                      <Text style={styles.inputPrefix}>{currency}</Text>
+                      <TextInput
+                        style={styles.amountInput}
+                        value={amount}
+                        onChangeText={setAmount}
+                        keyboardType="numeric"
+                        placeholder="0.00"
+                        placeholderTextColor="#94A3B8"
+                      />
+                    </View>
 
-                <View style={styles.quickAmountGrid}>
-                  {quickAmounts.map((val) => (
-                    <TouchableOpacity
-                      key={val}
-                      style={[styles.quickAmountBtn, quickAmount === val && styles.quickAmountBtnActive]}
-                      onPress={() => {
-                        setQuickAmount(val);
-                        setAmount(String(val));
-                      }}>
-                      <Text style={[styles.quickAmountText, quickAmount === val && styles.quickAmountTextActive]}>
-                        {currency}{val}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-               </>
-               )}
+                    <View style={styles.quickAmountGrid}>
+                      {quickAmounts.map((val) => (
+                        <TouchableOpacity
+                          key={val}
+                          style={[styles.quickAmountBtn, quickAmount === val && styles.quickAmountBtnActive]}
+                          onPress={() => {
+                            setQuickAmount(val);
+                            setAmount(String(val));
+                          }}>
+                          <Text style={[styles.quickAmountText, quickAmount === val && styles.quickAmountTextActive]}>
+                            {currency}{val}
+                          </Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  </>
+                )}
                 {/* <Text style={[styles.cardLabel, { marginTop: 24 }]}>Select Payment Method</Text>
               <TouchableOpacity 
                 style={[styles.paymentOption, paymentMethod === 'upi' && styles.paymentOptionActive]}

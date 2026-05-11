@@ -975,8 +975,9 @@ const Chat = ({ route, navigation }) => {
   }
 
   return (
-    <SafeAreaView style={[styles.safe, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
+    <SafeAreaView style={[styles.safe, { paddingBottom: insets.bottom }]}>
       {/* <KeyboardAvoidingView style={styles.wrapper} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}> */}
+   
       <View style={styles.topBar}>
         <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: isEnded ? '#9E9E9E' : '#4CAF50', marginRight: 8 }} />
         <Text style={{ fontSize: 13, fontWeight: '600', color: isEnded ? '#9E9E9E' : '#4CAF50', flex: 1 }}>{isEnded ? 'Ended' : 'Live'}</Text>

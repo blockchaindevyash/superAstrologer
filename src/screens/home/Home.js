@@ -210,7 +210,7 @@ export default function Home({ navigation }) {
       </ScrollView>
       {/* Active Chat Sessions Footer */}
       {activeChats && activeChats.length > 0 && (
-        <View style={styles.activeFooterBar}>
+        <View style={[styles.activeFooterBar, {bottom: insets.bottom + 80}]}>
           <View style={styles.activeFooterHeader}>
             <View style={styles.liveDot} />
             <Text style={styles.activeFooterTitle}>Active Chat Sessions</Text>
