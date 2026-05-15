@@ -22,7 +22,7 @@ import messaging from '@react-native-firebase/messaging';
 import { getConfirmation, setConfirmation } from './firebaseConfirm';
 
 const PRIMARY_COLOR = COLORS.primary;
-
+const OTP_LENGTH = 6;
 export default function OtpVerificationScreen({ navigation, route }) {
   const { phone, country } = route?.params || {};
   const inputRefs = useRef([]);
@@ -136,6 +136,56 @@ export default function OtpVerificationScreen({ navigation, route }) {
 
   const formattedPhone = `+${country} ${phone}`;
 
+  const handleOtpChange = (text, index) => {
+    const cleanedText = text.replace(/[^0-9]/g, '');
+
+    if (cleanedText.length > 1) {
+      const pastedOtp = cleanedText.slice(0, OTP_LENGTH).split('');
+
+      const newOtpValues = [...otpValues];
+
+      pastedOtp.forEach((digit, i) => {
+        newOtpValues[i] = digit;
+      });
+
+      setOtpValues(newOtpValues);
+
+      Keyboard.dismiss();
+
+      // Focus last input
+      inputRefs.current[OTP_LENGTH - 1]?.focus();
+
+      // Auto verify if complete
+      if (pastedOtp.length === OTP_LENGTH) {
+        setVerifying(true);
+        handleVerify(newOtpValues);
+      }
+
+      return;
+    }
+
+    const newOtpValues = [...otpValues];
+    newOtpValues[index] = cleanedText;
+
+    setOtpValues(newOtpValues);
+
+    if (cleanedText && index < OTP_LENGTH - 1) {
+      inputRefs.current[index + 1]?.focus();
+    }
+
+    // ✅ Auto verify
+    if (index === OTP_LENGTH - 1 && cleanedText) {
+      Keyboard.dismiss();
+
+      const finalOtp = newOtpValues.join('');
+
+      if (finalOtp.length === OTP_LENGTH) {
+        setVerifying(true);
+        handleVerify(newOtpValues);
+      }
+    }
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
     <View style={styles.container}>
@@ -164,21 +214,12 @@ export default function OtpVerificationScreen({ navigation, route }) {
               style={styles.otpInput}
               keyboardType="number-pad"
               returnKeyType="done"
-              maxLength={1}
+              textContentType="oneTimeCode"
+              autoComplete="sms-otp"
+              maxLength={index === 0 ? 6 : 1}
               textAlign="center"
               value={otpValues[index]}
-              onChangeText={(text) => {
-                const newOtpValues = [...otpValues];
-                newOtpValues[index] = text;
-                setOtpValues(newOtpValues);
-                if (text && index < 5) {
-                  inputRefs.current[index + 1].focus();
-                } else if (text && index === 5) {
-                  Keyboard.dismiss();
-                  setVerifying(true);
-                  handleVerify(newOtpValues);
-                }
-              }}
+              onChangeText={(text) => handleOtpChange(text, index)}
               onKeyPress={({ nativeEvent }) => {
                 if (nativeEvent.key === 'Backspace' && !otpValues[index] && index > 0) {
                   inputRefs.current[index - 1].focus();

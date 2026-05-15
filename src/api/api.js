@@ -239,7 +239,6 @@ export const sendMessage = async (sessionId, message) => {
 
 // Kundali API
 export const generateKundali = async (formData) => {
-    
   try {
     const response = await apiClient.post('kundali', {
       user_info: formData,
@@ -401,6 +400,28 @@ export const getApiKeys = async (amount) => {
 export const getPush = async (amount) => {
   try {
     const response = await apiClient.get('getPush');
+
+    return response;
+  } catch (error) {
+    console.error('Error:', error.response.data);
+    throw error;
+  }
+};
+
+export const getAiHistory = async () => {
+  try {
+    const response = await apiClient.get('ai-history-list');
+
+    return response;
+  } catch (error) {
+    console.error('Error:', error.response.data);
+    throw error;
+  }
+};
+
+export const getAiHistoryDetail = async (id) => {
+  try {
+    const response = await apiClient.get('ai-history-detail/'+id);
 
     return response;
   } catch (error) {

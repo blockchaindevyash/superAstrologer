@@ -200,12 +200,9 @@ const AdminChatHistory = ({ navigation }) => {
               Explore your cosmic journey today
             </Text>
           </View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Info')}
-            style={styles.profileBadge}
-          >
+          <View style={styles.profileBadge}>
             <Ionicons name="person-circle-outline" size={42} color={COLORS.primary} />
-          </TouchableOpacity>
+          </View>
         </View>
       </View>
       {loading ? (
@@ -418,6 +415,10 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
     paddingBottom: 20,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
   navItem: {
     alignItems: 'center',

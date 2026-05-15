@@ -274,6 +274,36 @@ const AdminMessageList = ({ route, navigation }) => {
     }
   }, [messages, typing])
 
+  // set header button to view astrologer profile
+  React.useEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => (
+        <View style={styles.headerTitleContainer}>
+          <View>
+            <TouchableOpacity onPress={() => navigation.navigate('Profile', { astrologer })} activeOpacity={0.7}>
+              <Text style={styles.headerTitleText}>{receiverData?.name || 'Unknown User'}</Text>
+            </TouchableOpacity>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ fontSize: 11, color: '#4CAF50', fontWeight: '600' }}>• Online</Text>
+              {receiverData?.wallet !== null && (
+                <Text style={{ fontSize: 11, color: '#666', fontWeight: '500', marginLeft: 8 }}>
+                  Available Balance: ₹{receiverData?.wallet}
+                </Text>
+              )}
+            </View>
+          </View>
+        </View>
+      ),
+      headerStyle: {
+        backgroundColor: '#fff',
+        elevation: 0,
+        shadowOpacity: 0,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F0F0F0',
+      }
+    })
+  }, [navigation, astrologer, receiverData])
+
   // cleanup timer on unmount
   React.useEffect(() => {
     return () => {

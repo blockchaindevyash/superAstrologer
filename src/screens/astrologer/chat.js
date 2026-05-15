@@ -53,6 +53,7 @@ const Chat = ({ route, navigation }) => {
   const [pendingAction, setPendingAction] = React.useState(null);
   const [adminData, setAdminData] = React.useState(null);
   const [refresh, setRefresh] = React.useState(false);
+  const [videoLoading, setVideoLoading] = React.useState(false);
 
   const listRef = React.useRef(null)
   const timerRef = React.useRef(null)
@@ -215,6 +216,7 @@ const Chat = ({ route, navigation }) => {
   }
 
   const onVideoCallFunction = async () => {
+   setVideoLoading(true);
     try {
       const admin = adminRef.current;
 
@@ -269,8 +271,10 @@ const Chat = ({ route, navigation }) => {
           }),
         }
       );
+      setVideoLoading(false);
       navigation.navigate('VideoCallScreen', { data: data });
     } catch (error) {
+      setVideoLoading(false);
       console.log('onVideoCallFunction Error:', error);
     }
   };
@@ -299,12 +303,20 @@ const Chat = ({ route, navigation }) => {
       headerRight: () => (
         isEnded ? null : (
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <TouchableOpacity style={{ marginRight: 15 }} onPress={() => onVideoCallFunction()}>
-              <Image style={{
-                width: 22,
-                height: 22,
-                resizeMode: 'contain',
-              }} source={video} />
+            <TouchableOpacity disabled={videoLoading} style={{marginRight: 15}} onPress={() => onVideoCallFunction()}>
+              {videoLoading ? (
+                <ActivityIndicator
+                  size="small"
+                  color="#D32F2F"
+                  style={{marginRight: 6}}
+                />
+              ) : (
+                <Image style={{
+                  width: 22,
+                  height: 22,
+                  resizeMode: 'contain',
+                }} source={video} />
+              )}
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleEndChat}
@@ -318,13 +330,12 @@ const Chat = ({ route, navigation }) => {
                 flexDirection: 'row',
                 alignItems: 'center',
                 opacity: endingChat ? 0.6 : 1
-              }}
-            >
+              }}>
               {endingChat && (
                 <ActivityIndicator
                   size="small"
                   color="#D32F2F"
-                  style={{ marginRight: 6 }}
+                  style={{marginRight: 6}}
                 />
               )}
               <Text style={{ color: '#D32F2F', fontWeight: '700', fontSize: 11 }}>

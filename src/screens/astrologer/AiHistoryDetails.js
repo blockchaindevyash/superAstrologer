@@ -109,7 +109,7 @@ Generated from AstroTalky
                 <View style={styles.headerLeft}>
                     <BackButton navigation={navigation} />
                 </View>
-                <Text style={styles.headerTitle}>AI Report</Text>
+                <Text style={styles.headerTitle}>{kundaliData?.type === 'kundali' ? 'Kundali' : kundaliData?.type === 'prediction' ? 'Prediction' : kundaliData?.type === 'horoscope' ? 'Horoscope' : kundaliData?.type === 'baby' ? 'Baby' : 'Match Making'} Report</Text>
                 <TouchableOpacity style={styles.headerRight} onPress={handleShare}>
                     <MaterialIcons name="share" size={24} color={COLORS.primary} />
                 </TouchableOpacity>

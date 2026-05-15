@@ -138,12 +138,9 @@ const ChatHistory = ({ navigation }) => {
               Explore your cosmic journey today
             </Text>
           </View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Info')}
-            style={styles.profileBadge}
-          >
+          <View style={styles.profileBadge}>
             <Ionicons name="person-circle-outline" size={42} color={COLORS.primary} />
-          </TouchableOpacity>
+          </View>
         </View>
       </View>
 

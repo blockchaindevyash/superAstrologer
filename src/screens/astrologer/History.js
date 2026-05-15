@@ -147,6 +147,29 @@ export default History;
 const HistoryCard = ({ item, onView }) => {
   const isActive = String(item?.status).toLowerCase() === 'active'
   const minuteOrActive = isActive ? 'Active' : (item?.minute || '')
+ 
+  const fmtDateTimeString = (ts) => {
+    if (!ts) return '';
+
+    const d = new Date(ts);
+
+    // Date
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+
+    // Time
+    let hrs = d.getHours();
+    const mins = String(d.getMinutes()).padStart(2, '0');
+
+    const ampm = hrs >= 12 ? 'AM' : 'PM';
+
+    hrs = hrs % 12;
+    if (hrs === 0) hrs = 12;
+
+    return `${day}/${month}/${year} ${hrs}:${mins} ${ampm}`;
+  };
+
   return (
     <View style={styles.card}>
       <View style={styles.cardRow}>
@@ -175,7 +198,7 @@ const HistoryCard = ({ item, onView }) => {
       </View>
 
       <View style={styles.cardFooter}>
-        <Text style={styles.date}>{item?.last_message_time || ''}</Text>
+        <Text style={styles.date}>{fmtDateTimeString(item?.last_message_time) || ''}</Text>
         {isActive ? (
           <TouchableOpacity style={[styles.viewBtn, styles.viewBtnActive]} onPress={onView}>
             <Text style={styles.viewText}>View</Text>

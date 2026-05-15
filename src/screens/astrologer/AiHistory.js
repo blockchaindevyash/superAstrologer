@@ -6,14 +6,20 @@ import {
   FlatList,
   RefreshControl,
   Image,
+  TouchableOpacity,
 } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
 
-import { getPush } from "../../api/api";
+import { getAiHistory, getAiHistoryDetail, getPush } from "../../api/api";
 import COLORS from "../../config/colors";
 import { Loader, AppStatusBar, BackButton } from "../../config/service";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import kundali from "../../../assets/kundali.jpg";
+import pre from "../../../assets/pre.jpg";
+import horo from "../../../assets/horo.jpg";
+import mm from "../../../assets/mm.jpg";
+import b from "../../../assets/b.jpg";
 
 const AiHistory = () => {
   const navigation = useNavigation();
@@ -24,7 +30,7 @@ const AiHistory = () => {
 
   const fetchNotifications = async () => {
     try {
-      const res = await getPush();
+      const res = await getAiHistory();
       setAiHistory(res?.data?.data ?? []);
     } catch (error) {
       console.log("Push fetch error:", error);
@@ -43,29 +49,75 @@ const AiHistory = () => {
     fetchNotifications();
   };
 
+  const fmtTimeString = (ts) => {
+    if (!ts) return '';
+
+    const d = new Date(ts);
+    const now = new Date();
+
+    const isToday =
+      d.getDate() === now.getDate() &&
+      d.getMonth() === now.getMonth() &&
+      d.getFullYear() === now.getFullYear();
+
+    const yesterday = new Date();
+    yesterday.setDate(now.getDate() - 1);
+
+    const isYesterday =
+      d.getDate() === yesterday.getDate() &&
+      d.getMonth() === yesterday.getMonth() &&
+      d.getFullYear() === yesterday.getFullYear();
+
+    if (isToday) {
+      let hrs = d.getHours();
+      const mins = d.getMinutes();
+      const ampm = hrs >= 12 ? 'PM' : 'AM';
+
+      hrs = hrs % 12;
+      if (hrs === 0) hrs = 12;
+
+      return `${hrs}:${mins < 10 ? '0' + mins : mins} ${ampm}`;
+    }
+
+    if (isYesterday) {
+      return "Yesterday";
+    }
+
+    return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+  };
+
+  const onGetAiDetailData = async (item) => {
+    try {
+      const detailResponse = await getAiHistoryDetail(item.id);
+
+      if (detailResponse.data?.status) {
+        let detailData= detailResponse.data?.data;
+        const formData = {
+          name: detailData?.name,
+          dob: detailData?.dob ? detailData?.dob : '',
+          tob: detailData?.tob ? detailData?.tob : '',
+          pob: detailData?.pob,
+          gender: detailData?.gender,
+          language: detailData?.language,
+        };
+        navigation.navigate('AiHistoryDetails', {kundaliData: detailResponse.data?.data, personalDetails: formData});
+      }
+    } catch (error) {
+      console.log("Error fetching AI history detail:", error);
+    }
+  };
+
   const renderItem = ({ item }) => (
-    <View style={styles.card}>
-      {/* Full Width Image */}
-      {item.img ? (
-        <Image source={{ uri: item.img }} style={styles.bannerImage} />
-      ) : null}
+    <TouchableOpacity style={styles.card} onPress={() => onGetAiDetailData(item)}>
+      <Image source={item.type === "kundali" ? kundali : item.type === "prediction" ? pre : item.type === "horoscope" ? horo : item.type === "baby" ? b : mm} style={styles.bannerImage}/>
       <View style={styles.contentRow}>
-        {!item.img && (
-          <View style={styles.iconBox}>
-            <MaterialIcons
-              name="notifications"
-              size={22}
-              color={COLORS.primary}
-            />
-          </View>
-        )}
         <View style={styles.textBox}>
-          <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.description}>{item.text}</Text>
-          <Text style={styles.time}>{item.date}</Text>
+          <Text style={styles.title}>{item.name}</Text>
+          <Text style={styles.description}>{item.type}</Text>
+          <Text style={styles.time}>{fmtTimeString(item.created_at)}</Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (

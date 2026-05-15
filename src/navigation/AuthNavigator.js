@@ -90,9 +90,9 @@ export default function AuthNavigator() {
       <Stack.Screen name="AiHistory" component={AiHistory} options={{ headerShown: false }} />
       <Stack.Screen name="AiHistoryDetails" component={AiHistoryDetails} options={{ headerShown: false }} />
       <Stack.Screen name="ChatHistory" component={ChatHistory} options={{ headerShown: false }} />
-      <Stack.Screen name="AstroChat" component={AstroChat} options={({ route }) => ({ title: route?.params?.name || 'Start Chat' })} />
+      <Stack.Screen name="AstroChat" component={AstroChat} options={({ route }) => ({ title: route?.params?.name || 'Unknown User' })} />
       <Stack.Screen name="AdminChatHistory" component={AdminChatHistory} options={{ headerShown: false }} />
-      <Stack.Screen name="AdminMessageList" component={AdminMessageList} options={({ route }) => ({ title: route?.params?.name || 'Start Chat' })} />
+      <Stack.Screen name="AdminMessageList" component={AdminMessageList} options={({ route }) => ({ title: route?.params?.name || 'Unknown User' })} />
       <Stack.Screen name="VideoCallScreen" component={VideoCallScreen} options={{ headerShown: false }} />
       <Stack.Screen name="CallOptionScreen" component={CallOptionScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Profile" component={Profile} options={{ title: 'Astrologer profile' }} />

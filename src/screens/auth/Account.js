@@ -249,7 +249,7 @@ const Account = ({ navigation }) => {
                 onPress={() => navigation.navigate('History')}
               />
             )}
-            {/* {(user?.user_type != 'astrologer' && user?.user_type != 'admin') && (
+            {(user?.user_type != 'astrologer' && user?.user_type != 'admin') && (
               <MenuItem
                 icon="history"
                 title="AI History"
@@ -257,7 +257,7 @@ const Account = ({ navigation }) => {
                 color="#6366F1"
                 onPress={() => navigation.navigate('AiHistory')}
               />
-            )} */}
+            )}
             {(user?.user_type != 'astrologer' && user?.user_type != 'admin') && (
               <MenuItem
                 icon="wallet"
@@ -291,7 +291,7 @@ const Account = ({ navigation }) => {
               <MaterialIcons name="logout" size={22} color="#fff" />
               <Text style={styles.logoutText}>Logout</Text>
             </TouchableOpacity>
-            <Text style={styles.version}>Version 2.2 (15)</Text>
+            <Text style={styles.version}>Version 2.5 (18)</Text>
           </>
         )}
       </ScrollView>
