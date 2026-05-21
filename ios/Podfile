@@ -5,6 +5,8 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
+ENV['NODE_BINARY'] = '/usr/local/opt/node@20/bin/node'
+
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 use_frameworks! :linkage => :static

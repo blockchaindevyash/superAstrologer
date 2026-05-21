@@ -106,7 +106,7 @@ PODS:
   - GoogleUtilities/UserDefaults (8.1.0):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
-  - GTMSessionFetcher/Core (5.2.0)
+  - GTMSessionFetcher/Core (5.3.0)
   - hermes-engine (0.14.0):
     - hermes-engine/Pre-built (= 0.14.0)
   - hermes-engine/Pre-built (0.14.0)
@@ -3651,7 +3651,7 @@ SPEC CHECKSUMS:
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
-  GTMSessionFetcher: 904bdd2a82c635bcd6f44edf94cc8775c5d1d6e6
+  GTMSessionFetcher: 127211aeec0b1e904fc49f4f6f895dcc535b0ecf
   hermes-engine: c5f5a38660293ad812bbcfccbcf11c6eb68f113d
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   OneSignalXCFramework: 943852e7d70d719f73e9669d48620aeec1b93022
@@ -3756,6 +3756,6 @@ SPEC CHECKSUMS:
   StripeUICore: 30f8352fd7a5cf1541b7777a57b3ad1133bf6763
   Yoga: 33b53536a0500d039f2cd78caf1d5d68712d3af7
 
-PODFILE CHECKSUM: e3c7d09f18429450b2993b96bb83329c54957930
+PODFILE CHECKSUM: cba82121e34073666adebad9f04c8d90b2287881
 
 COCOAPODS: 1.16.2
