@@ -93,7 +93,15 @@ const Wallet = ({ navigation }) => {
           const productId = purchase.productId;
           const credits = CREDIT_MAP[productId];
           // 👉 CALL YOUR BACKEND HERE
-          await addCreditsToUser(credits, receipt);
+          // await addCreditsToUser(credits, receipt);
+          const addRes = await addWallet(Number(credits), 'card');
+          if (addRes?.data) {
+            setTransactions(addRes.data.data);
+            setBalance(String(addRes.data.balance));
+            Alert.alert('Success!', `${currency}${amount} has been added to your wallet successfully.`, [{ text: 'OK' }]);
+            setAmount('');
+            setQuickAmount(null);
+          }
           await RNIap.finishTransaction({ purchase });
           Alert.alert("Success", `${credits} credits added!`);
         } catch (error) {
@@ -125,8 +133,10 @@ const Wallet = ({ navigation }) => {
 
   const init = async () => {
     try {
-      const items = await RNIap.getProducts({ skus: PRODUCT_IDS });
-      console.log("Products:", items);
+      const items = await RNIap.getProducts({
+        skus: PRODUCT_IDS,
+      });
+      console.log("Products:", items, PRODUCT_IDS);
       // alert(JSON.stringify(items));
       setProducts(items);
     } catch (err) {
@@ -136,7 +146,10 @@ const Wallet = ({ navigation }) => {
 
   const buyProduct = async (productId) => {
     try {
-      await RNIap.requestPurchase({ sku: productId });
+      await RNIap.requestPurchase({
+        sku: productId,
+        andDangerouslyFinishTransactionAutomaticallyIOS: false,
+      });
     } catch (err) {
       console.log(err);
     }
@@ -164,6 +177,7 @@ const Wallet = ({ navigation }) => {
   const handleProceed = async () => {
     try {
       if (Platform.OS === 'ios') {
+        console.log("Buying product for amount:", amount);
         buyProduct(`astro_${amount}_credits`);
         return;
       }
