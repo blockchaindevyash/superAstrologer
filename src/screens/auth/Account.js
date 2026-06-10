@@ -10,6 +10,7 @@ import {
   Modal,
   TextInput,
   ActivityIndicator,
+  Switch,
 } from 'react-native';
 
 import COLORS from '../../config/colors';
@@ -23,6 +24,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 const Account = ({ navigation }) => {
   const insets = useSafeAreaInsets();
   const [loading, setLoading] = React.useState(true);
+  const [switchLoading, setSwitchLoading] = React.useState(false);
   const [error, setError] = React.useState(null);
   const [user, setUser] = React.useState(null);
   const [chatCount, setChatCount] = React.useState(0);
@@ -142,6 +144,24 @@ const Account = ({ navigation }) => {
     }
   };
 
+  const onChangeAIChat = async (newValue) => {
+    try {
+      setSwitchLoading(true);
+      const res = await (await import('../../api/api')).updateAIChat(newValue == 1 ? 0 : 1);
+      if (res?.success) {
+        console.log('AI Chat setting updated', res);
+        setUser(prev => ({ ...prev, ai_chat: newValue == 1 ? 0 : 1 }));
+        setSwitchLoading(false);
+      } else {
+        Alert.alert('Error', res?.error || 'Failed to update setting');
+        setSwitchLoading(false);
+      }
+    } catch (e) {
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+      setSwitchLoading(false);
+    }
+  };
+
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom, paddingTop: insets.top }]}>
       <AppStatusBar backgroundColor={COLORS.secondary} />
@@ -231,6 +251,16 @@ const Account = ({ navigation }) => {
               color={COLORS.primary}
               onPress={() => navigation.navigate('Setting', { user })}
             />
+            {(user?.user_type != 'astrologer' && user?.user_type != null) && (
+              <MenuSwitchItem
+                icon="hdr-auto"
+                title="Auto AI Chat"
+                subtitle={'Not set'}
+                color={COLORS.primary}
+                value={user?.ai_chat == 1 ? true : false}
+                onPress={() => switchLoading ? null : onChangeAIChat(user?.ai_chat)}
+              />
+            )}
             {(user?.user_type != 'astrologer' && user?.user_type != 'admin') && (
               <MenuItem
                 icon="auto-graph"
@@ -328,6 +358,20 @@ const Account = ({ navigation }) => {
     </View>
   );
 };
+
+/* Reusable Menu Item */
+const MenuSwitchItem = ({ icon, title, subtitle, color, onPress, value }) => (
+  <TouchableOpacity style={styles.menuItem} onPress={onPress}>
+    <View style={[styles.menuIcon, { backgroundColor: `${color}15` }]}>
+      <MaterialIcons name={icon} size={30} color={color} />
+    </View>
+    <View style={{ flex: 1 }}>
+      <Text style={styles.menuTitle}>{title}</Text>
+      {subtitle && <Text style={styles.menuSubtitle}>{subtitle}</Text>}
+    </View>
+    <Switch value={value} onValueChange={onPress} thumbColor={value ? color : '#E5E7EB'} />
+  </TouchableOpacity>
+);
 
 /* Reusable Menu Item */
 const MenuItem = ({ icon, title, subtitle, color, onPress }) => (
@@ -629,4 +673,3 @@ const styles = StyleSheet.create({
     backgroundColor: '#DC2626',
   },
 });
-

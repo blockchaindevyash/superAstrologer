@@ -16,7 +16,6 @@ export default function App() {
         const res = await getApiKeys();
          console.log('App init :', res);
         setStripeKey(res.data.stripe_key);
-
       } catch (error) {
         console.log('❌ App init error:', error);
       }

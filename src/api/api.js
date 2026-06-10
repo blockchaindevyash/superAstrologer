@@ -392,7 +392,7 @@ export const getApiKeys = async (amount) => {
 
     return response;
   } catch (error) {
-    console.error('Error:', error.response.data);
+    console.error('Error:', error?.response?.data);
     throw error;
   }
 };
@@ -449,6 +449,18 @@ export const deleteAccount = async (dlt) => {
     return response.data;
   } catch (error) {
     console.error('Error deleting account:', error.response?.data || error);
+    throw error;
+  }
+};
+
+export const updateAIChat = async (dlt) => {
+  try {
+    const response = await apiClient.post('update-ai-chat-for-astrologers', {
+      ai_chat: dlt,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error updating AI chat:', error.response?.data || error);
     throw error;
   }
 };
