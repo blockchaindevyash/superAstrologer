@@ -321,7 +321,7 @@ const Account = ({ navigation }) => {
               <MaterialIcons name="logout" size={22} color="#fff" />
               <Text style={styles.logoutText}>Logout</Text>
             </TouchableOpacity>
-            <Text style={styles.version}>Version 2.5 (18)</Text>
+            <Text style={styles.version}>Version 2.6 (19)</Text>
           </>
         )}
       </ScrollView>
