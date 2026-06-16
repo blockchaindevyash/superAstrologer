@@ -109,7 +109,7 @@ export const loginUser = async (country, phone, pushToken) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error during login:', error.response.data);
+    console.error('Error during login:', error.response);
     throw error;
   }
 };

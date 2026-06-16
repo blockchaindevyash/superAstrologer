@@ -251,7 +251,7 @@ const Account = ({ navigation }) => {
               color={COLORS.primary}
               onPress={() => navigation.navigate('Setting', { user })}
             />
-            {(user?.user_type != 'astrologer' && user?.user_type != null) && (
+            {(user?.user_type != 'astrologer' && user?.user_type != null && user?.phone == '6355216949') && (
               <MenuSwitchItem
                 icon="hdr-auto"
                 title="Auto AI Chat"
@@ -321,7 +321,7 @@ const Account = ({ navigation }) => {
               <MaterialIcons name="logout" size={22} color="#fff" />
               <Text style={styles.logoutText}>Logout</Text>
             </TouchableOpacity>
-            <Text style={styles.version}>Version 2.6 (19)</Text>
+            <Text style={styles.version}>Version 2.6 (20)</Text>
           </>
         )}
       </ScrollView>
